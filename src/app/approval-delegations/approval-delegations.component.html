@@ -1,0 +1,687 @@
+<div class="h-full flex flex-col bg-slate-50/50 dark:bg-zinc-950 text-foreground transition-theme">
+  <!-- Page Header -->
+  <div class="px-6 lg:px-10 py-8 border-b border-border bg-card shrink-0">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-foreground tracking-tight">Approval Delegations</h1>
+        <p class="text-sm text-muted-foreground mt-1">Manage your approval delegations and out of office settings.</p>
+      </div>
+    </div>
+
+    <!-- Tabs Switcher -->
+    <div class="flex items-center gap-6 mt-8 -mb-[33px]">
+      <button 
+        (click)="activeTab.set('delegations')"
+        [class]="activeTab() === 'delegations' ? 'text-accent border-b-2 border-accent font-semibold pb-3 flex items-center gap-2 cursor-pointer transition-all' : 'text-muted-foreground hover:text-foreground font-medium pb-3 border-b-2 border-transparent transition-colors flex items-center gap-2 cursor-pointer'">
+        <lucide-icon name="users" class="w-4 h-4"></lucide-icon>
+        Delegation Rules
+      </button>
+      <button 
+        (click)="activeTab.set('requests')"
+        [class]="activeTab() === 'requests' ? 'text-accent border-b-2 border-accent font-semibold pb-3 flex items-center gap-2 cursor-pointer transition-all' : 'text-muted-foreground hover:text-foreground font-medium pb-3 border-b-2 border-transparent transition-colors flex items-center gap-2 cursor-pointer'">
+        <lucide-icon name="clipboard-list" class="w-4 h-4"></lucide-icon>
+        Approval Requests
+      </button>
+    </div>
+  </div>
+
+  <!-- Content Workspace -->
+  <div class="flex-1 overflow-y-auto p-6 lg:px-10 py-8">
+    <div class="max-w-6xl mx-auto space-y-6">
+
+      <!-- ==================== TAB 2: DELEGATION RULES (Cloned UI) ==================== -->
+      @if (activeTab() === 'delegations') {
+        <!-- Delegation Stats Row -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-card border border-border rounded-xl p-5 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Active Delegations</p>
+              <h3 class="text-3xl font-extrabold text-foreground mt-2 font-mono">{{ activeCount() }}</h3>
+            </div>
+            <div class="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+            </div>
+          </div>
+
+          <div class="bg-card border border-border rounded-xl p-5 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Scheduled Coverage</p>
+              <h3 class="text-3xl font-extrabold text-foreground mt-2 font-mono">{{ scheduledCount() }}</h3>
+            </div>
+            <div class="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center">
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+            </div>
+          </div>
+
+          <div class="bg-card border border-border rounded-xl p-5 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Expired Rules</p>
+              <h3 class="text-3xl font-extrabold text-foreground mt-2 font-mono">{{ expiredCount() }}</h3>
+            </div>
+            <div class="w-10 h-10 rounded-full bg-zinc-500/10 flex items-center justify-center">
+              <span class="w-2.5 h-2.5 rounded-full bg-zinc-400"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Delegation rule header block -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-card border border-border rounded-xl p-4 shadow-sm">
+          <div class="relative w-full md:w-80">
+            <lucide-icon name="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"></lucide-icon>
+            <input 
+              type="text" 
+              placeholder="Search delegations..." 
+              class="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all text-foreground placeholder:text-muted-foreground shadow-sm">
+          </div>
+          <button 
+            (click)="openNewDelegationModal()" 
+            class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-blue-500/20 hover:-translate-y-0.5 cursor-pointer">
+            <lucide-icon name="plus" class="w-4 h-4"></lucide-icon>
+            Add Delegation
+          </button>
+        </div>
+
+        <!-- Delegation Table (Cloned from image) -->
+        <div class="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse text-left text-sm">
+              <thead>
+                <tr class="border-b border-border bg-muted/40 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  <th class="px-6 py-4">Name</th>
+                  <th class="px-6 py-4">Delegated To</th>
+                  <th class="px-6 py-4">Start Date</th>
+                  <th class="px-6 py-4">End Date</th>
+                  <th class="px-6 py-4">Status</th>
+                  <th class="px-6 py-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-border">
+                @for (del of delegations(); track del.id) {
+                  <tr class="hover:bg-slate-50 dark:hover:bg-zinc-900/50 transition-colors group border-l-4" [ngClass]="{
+                    'border-l-emerald-500': del.status === 'Active',
+                    'border-l-blue-500': del.status === 'Scheduled',
+                    'border-l-zinc-300 dark:border-l-zinc-700': del.status === 'Expired'
+                  }">
+                    <td class="px-6 py-4 font-bold text-slate-900 dark:text-zinc-100 text-xs">John Doe</td>
+                    <td class="px-6 py-4">
+                      <div class="flex items-center gap-3">
+                        <span class="relative flex shrink-0 overflow-hidden rounded-full h-9 w-9 border border-slate-200 dark:border-zinc-800 shadow-sm">
+                          @if (del.delegatedTo.avatar) {
+                            <img class="aspect-square h-full w-full object-cover" [alt]="del.delegatedTo.name" [src]="del.delegatedTo.avatar">
+                          } @else {
+                            <div class="flex h-full w-full items-center justify-center font-bold text-xs" [ngClass]="del.delegatedTo.color">
+                              {{ del.delegatedTo.initials }}
+                            </div>
+                          }
+                        </span>
+                        <div class="flex flex-col">
+                          <span class="font-bold text-slate-900 dark:text-zinc-100 text-xs tracking-tight">{{ del.delegatedTo.name }}</span>
+                          <span class="text-[10px] text-slate-500 dark:text-zinc-500 font-medium">{{ del.delegatedTo.email }}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 font-mono text-xs text-slate-600 dark:text-zinc-400 font-medium">{{ del.startDate }}</td>
+                    <td class="px-6 py-4 font-mono text-xs text-slate-600 dark:text-zinc-400 font-medium">{{ del.endDate }}</td>
+                    <td class="px-6 py-4">
+                      <span [ngClass]="{
+                        'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20': del.status === 'Active',
+                        'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20': del.status === 'Scheduled',
+                        'bg-slate-50 text-slate-600 border-slate-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700': del.status === 'Expired'
+                      }" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-wider">
+                        <span class="w-1 h-1 rounded-full mr-1.5" [ngClass]="{
+                          'bg-emerald-500': del.status === 'Active',
+                          'bg-blue-500': del.status === 'Scheduled',
+                          'bg-slate-400': del.status === 'Expired'
+                        }"></span>
+                        {{ del.status }}
+                      </span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                      <div class="flex items-center justify-end gap-2">
+                        @if (del.status === 'Active' || del.status === 'Scheduled') {
+                          <button 
+                            (click)="revokeDelegation(del.id)"
+                            title="Revoke Delegation"
+                            class="inline-flex items-center justify-center px-3 py-1.5 border border-rose-200 hover:border-rose-300 dark:border-rose-900/50 bg-white dark:bg-zinc-950 hover:bg-rose-50 dark:hover:bg-rose-950/20 text-rose-600 dark:text-rose-400 text-[11px] font-bold rounded-xl cursor-pointer transition-all shadow-sm">
+                            Revoke
+                          </button>
+                        }
+                        <button class="inline-flex items-center justify-center w-8 h-8 rounded-xl border border-slate-200 dark:border-zinc-800 hover:bg-slate-100 dark:hover:bg-zinc-900 text-slate-500 dark:text-zinc-400 shadow-sm cursor-pointer transition-all">
+                          <lucide-icon name="more-horizontal" class="w-4 h-4"></lucide-icon>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Delegation Empty State -->
+          @if (delegations().length === 0) {
+            <div class="bg-card border border-border rounded-xl p-12 text-center shadow-sm">
+              <div class="w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center mx-auto mb-4 text-muted-foreground">
+                <lucide-icon name="users-round" class="w-6 h-6"></lucide-icon>
+              </div>
+              <h3 class="text-base font-bold text-foreground">No Delegation Rules</h3>
+              <p class="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">No backup coverage is defined. Add delegation rules when going out of office.</p>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ==================== TAB 1: APPROVAL REQUESTS ==================== -->
+      @if (activeTab() === 'requests') {
+        <!-- Requests Stats Row -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-card border border-border rounded-xl p-5 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Pending Requests</p>
+              <h3 class="text-3xl font-extrabold text-foreground mt-2 font-mono">{{ pendingCount() }}</h3>
+            </div>
+            <div class="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+            </div>
+          </div>
+
+          <div class="bg-card border border-border rounded-xl p-5 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Approved Requests</p>
+              <h3 class="text-3xl font-extrabold text-foreground mt-2 font-mono">{{ approvedCount() }}</h3>
+            </div>
+            <div class="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            </div>
+          </div>
+
+          <div class="bg-card border border-border rounded-xl p-5 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Rejected Requests</p>
+              <h3 class="text-3xl font-extrabold text-foreground mt-2 font-mono">{{ rejectedCount() }}</h3>
+            </div>
+            <div class="w-10 h-10 rounded-full bg-rose-500/10 flex items-center justify-center">
+              <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filters & Search Toolbar -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-card border border-border rounded-xl p-4 shadow-sm">
+          <!-- Left Status Pills -->
+          <div class="flex flex-wrap items-center gap-2">
+            <button 
+              (click)="statusFilter.set('All')"
+              [class]="statusFilter() === 'All' ? 'px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-accent/15 text-accent border border-accent/30' : 'px-3.5 py-1.5 rounded-lg text-xs font-medium bg-card hover:bg-muted text-muted-foreground hover:text-foreground border border-border cursor-pointer transition-colors'">
+              All Requests
+            </button>
+            <button 
+              (click)="statusFilter.set('Pending')"
+              [class]="statusFilter() === 'Pending' ? 'px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30' : 'px-3.5 py-1.5 rounded-lg text-xs font-medium bg-card hover:bg-muted text-muted-foreground hover:text-foreground border border-border cursor-pointer transition-colors'">
+              Pending
+            </button>
+            <button 
+              (click)="statusFilter.set('Approved')"
+              [class]="statusFilter() === 'Approved' ? 'px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30' : 'px-3.5 py-1.5 rounded-lg text-xs font-medium bg-card hover:bg-muted text-muted-foreground hover:text-foreground border border-border cursor-pointer transition-colors'">
+              Approved
+            </button>
+            <button 
+              (click)="statusFilter.set('Rejected')"
+              [class]="statusFilter() === 'Rejected' ? 'px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30' : 'px-3.5 py-1.5 rounded-lg text-xs font-medium bg-card hover:bg-muted text-muted-foreground hover:text-foreground border border-border cursor-pointer transition-colors'">
+              Rejected
+            </button>
+          </div>
+
+          <!-- Right Search and Dropdowns -->
+          <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+            <!-- Search field -->
+            <div class="relative w-full sm:w-64">
+              <lucide-icon name="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"></lucide-icon>
+              <input 
+                type="text" 
+                [ngModel]="searchQuery()" 
+                (ngModelChange)="searchQuery.set($event)"
+                placeholder="Search by ID, title, submitter..." 
+                class="w-full pl-10 pr-4 py-2 bg-card border border-border rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all text-foreground placeholder:text-muted-foreground shadow-sm">
+            </div>
+
+            <!-- Type dropdown -->
+            <div class="relative w-full sm:w-36">
+              <select 
+                [ngModel]="typeFilter()" 
+                (ngModelChange)="typeFilter.set($event)"
+                class="w-full px-3 py-2 bg-card border border-border rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all text-foreground cursor-pointer shadow-sm appearance-none pr-8 font-medium">
+                <option value="All">All Types</option>
+                <option value="Bill">Bills</option>
+                <option value="Expense">Expenses</option>
+              </select>
+              <lucide-icon name="chevron-down" class="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"></lucide-icon>
+            </div>
+          </div>
+        </div>
+
+        <!-- Requests Grid / Table -->
+        <div class="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse text-left text-sm">
+              <thead>
+                <tr class="border-b border-border bg-muted/40 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  <th class="px-6 py-4">Request</th>
+                  <th class="px-6 py-4">Submitter</th>
+                  <th class="px-6 py-4">Date</th>
+                  <th class="px-6 py-4 text-right">Amount</th>
+                  <th class="px-6 py-4">Status</th>
+                  <th class="px-6 py-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-border">
+                @for (req of filteredRequests(); track req.id) {
+                  <tr class="hover:bg-muted/30 transition-colors">
+                    <!-- Request Identifier & badge -->
+                    <td class="px-6 py-4">
+                      <div class="flex flex-col gap-1.5">
+                        <div class="flex items-center gap-2">
+                          <span class="font-mono text-[11px] bg-muted px-2 py-0.5 rounded border border-border text-foreground font-semibold tracking-wide">
+                            {{ req.id }}
+                          </span>
+                          <span [class]="req.type === 'Bill' ? 'bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider' : 'bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-800 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider'">
+                            {{ req.type }}
+                          </span>
+                        </div>
+                        <span class="text-sm font-bold text-foreground">{{ req.title }}</span>
+                      </div>
+                    </td>
+
+                    <!-- Submitter -->
+                    <td class="px-6 py-4">
+                      <div class="flex items-center gap-3">
+                        <span class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8 border border-border shadow-sm">
+                          @if (req.submitter.avatar) {
+                            <img class="aspect-square h-full w-full object-cover" [alt]="req.submitter.name" [src]="req.submitter.avatar">
+                          } @else {
+                            <div class="flex h-full w-full items-center justify-center font-bold text-xs" [ngClass]="req.submitter.color">
+                              {{ req.submitter.initials }}
+                            </div>
+                          }
+                        </span>
+                        <div class="flex flex-col">
+                          <span class="font-bold text-foreground text-xs">{{ req.submitter.name }}</span>
+                          <span class="text-[11px] text-muted-foreground">{{ req.department }}</span>
+                        </div>
+                      </div>
+                    </td>
+
+                    <!-- Date -->
+                    <td class="px-6 py-4">
+                      <span class="font-mono text-xs text-muted-foreground">{{ req.submitDate }}</span>
+                    </td>
+
+                    <!-- Amount -->
+                    <td class="px-6 py-4 text-right">
+                      <span class="font-mono font-bold text-sm text-foreground">
+                        {{ req.currency }} {{ req.amount | number:'1.2-2' }}
+                      </span>
+                    </td>
+
+                    <!-- Status Pill -->
+                    <td class="px-6 py-4">
+                      <span [ngClass]="{
+                          'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-900': req.status === 'Pending',
+                          'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-900': req.status === 'Approved',
+                          'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/30 dark:text-rose-400 dark:border-rose-900': req.status === 'Rejected'
+                        }" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border">
+                        <span [ngClass]="{
+                          'bg-amber-500': req.status === 'Pending',
+                          'bg-emerald-500': req.status === 'Approved',
+                          'bg-rose-500': req.status === 'Rejected'
+                        }" class="w-1.5 h-1.5 rounded-full"></span>
+                        {{ req.status }}
+                      </span>
+                    </td>
+
+                    <!-- Action buttons -->
+                    <td class="px-6 py-4 text-right">
+                      <div class="flex items-center justify-end gap-2">
+                        @if (req.status === 'Pending') {
+                          <button 
+                            (click)="approveRequest(req.id)"
+                            title="Approve Request"
+                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-600 hover:bg-blue-700 text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-accent/20 cursor-pointer transition-all">
+                            <lucide-icon name="check" class="w-4 h-4"></lucide-icon>
+                          </button>
+                          <button 
+                            (click)="openRequestDetails(req); initiateReject()"
+                            title="Reject Request"
+                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-rose-200 hover:border-rose-300 dark:border-rose-900 bg-card hover:bg-rose-50 dark:hover:bg-rose-950/30 text-rose-600 dark:text-rose-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-destructive/20 cursor-pointer transition-all">
+                            <lucide-icon name="x-circle" class="w-4 h-4"></lucide-icon>
+                          </button>
+                        }
+                        <button 
+                          (click)="openRequestDetails(req)"
+                          title="View Details"
+                          class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-border hover:bg-muted text-muted-foreground hover:text-foreground shadow-sm focus:outline-none focus:ring-2 focus:ring-accent/20 cursor-pointer transition-all">
+                          <lucide-icon name="eye" class="w-4 h-4"></lucide-icon>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty State -->
+          @if (filteredRequests().length === 0) {
+            <div class="py-16 px-6 text-center bg-card">
+              <div class="w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center mx-auto mb-4">
+                <lucide-icon name="circle-check-big" class="w-6 h-6 text-blue-600 dark:text-blue-400"></lucide-icon>
+              </div>
+              <h3 class="text-base font-bold text-foreground">You're all caught up!</h3>
+              <p class="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">No matching approval requests require your attention right now.</p>
+            </div>
+          }
+        </div>
+      }
+
+    </div>
+  </div>
+
+  <!-- ==================== DETAILS DRAWER ==================== -->
+  <p-drawer [visible]="isDetailsDrawerOpen()" (onHide)="closeRequestDetails()" position="right" styleClass="w-full md:w-[95vw]! lg:w-[45vw]! xl:w-[40vw]!">
+    <ng-template pTemplate="header">
+      <div class="py-3 px-6 border-b bg-gradient-to-r from-white via-blue-50 to-white dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-900 flex-shrink-0 w-full flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400">
+            <lucide-icon name="check-square" class="w-5 h-5"></lucide-icon>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-foreground">Request Details</h2>
+            <p class="text-xs text-muted-foreground">View audit trail and process approval</p>
+          </div>
+        </div>
+        <button (click)="closeRequestDetails()" class="inline-flex items-center justify-center gap-2 text-sm font-semibold transition-all hover:bg-muted text-muted-foreground hover:text-foreground rounded-xl h-9 w-9 border border-border cursor-pointer">
+          <lucide-icon name="x" class="w-4 h-4"></lucide-icon>
+        </button>
+      </div>
+    </ng-template>
+
+    @if (selectedRequest(); as req) {
+      <div class="flex flex-col h-full overflow-y-auto p-6 space-y-6">
+        <!-- Submitter info & metadata -->
+        <div class="bg-muted/30 border border-border rounded-xl p-4 flex flex-col gap-4">
+          <div class="flex items-start justify-between">
+            <div class="flex items-center gap-3">
+              <span class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 border border-border shadow-sm">
+                @if (req.submitter.avatar) {
+                  <img class="aspect-square h-full w-full object-cover" [alt]="req.submitter.name" [src]="req.submitter.avatar">
+                } @else {
+                  <div class="flex h-full w-full items-center justify-center font-bold text-sm" [ngClass]="req.submitter.color">
+                    {{ req.submitter.initials }}
+                  </div>
+                }
+              </span>
+              <div>
+                <h3 class="text-sm font-bold text-foreground">{{ req.submitter.name }}</h3>
+                <p class="text-xs text-muted-foreground font-mono">{{ req.submitter.email }}</p>
+              </div>
+            </div>
+            <span class="font-mono text-xs bg-muted px-2 py-0.5 rounded border border-border text-foreground font-bold">{{ req.id }}</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 border-t border-border pt-4 text-xs">
+            <div>
+              <p class="text-muted-foreground font-semibold">Department</p>
+              <p class="text-foreground font-medium mt-0.5">{{ req.department }}</p>
+            </div>
+            <div>
+              <p class="text-muted-foreground font-semibold">Type</p>
+              <p class="text-foreground font-medium mt-0.5">{{ req.type }}</p>
+            </div>
+            <div>
+              <p class="text-muted-foreground font-semibold">Submitted Date</p>
+              <p class="text-foreground font-medium mt-0.5 font-mono">{{ req.submitDate }}</p>
+            </div>
+            <div>
+              <p class="text-muted-foreground font-semibold">Status</p>
+              <span [ngClass]="{
+                'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-900': req.status === 'Pending',
+                'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-amber-900': req.status === 'Approved',
+                'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/30 dark:text-rose-400 dark:border-rose-900': req.status === 'Rejected'
+              }" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border mt-0.5 uppercase tracking-wider">
+                {{ req.status }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description / Title -->
+        <div class="space-y-2">
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Title & Description</h4>
+          <div class="bg-card border border-border rounded-xl p-4 space-y-2">
+            <h3 class="text-sm font-bold text-foreground">{{ req.title }}</h3>
+            <p class="text-xs text-muted-foreground leading-relaxed">{{ req.description }}</p>
+          </div>
+        </div>
+
+        <!-- Line items table -->
+        @if (req.items && req.items.length > 0) {
+          <div class="space-y-2">
+            <h4 class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Line Items Details</h4>
+            <div class="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
+              <table class="w-full border-collapse text-left text-xs font-mono">
+                <thead>
+                  <tr class="border-b border-border bg-muted/40 text-muted-foreground font-semibold">
+                    <th class="px-4 py-2.5">Item</th>
+                    <th class="px-4 py-2.5 text-center">Qty</th>
+                    <th class="px-4 py-2.5 text-right">Rate</th>
+                    <th class="px-4 py-2.5 text-right">Amount</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-border">
+                  @for (item of req.items; track item.description) {
+                    <tr class="text-foreground">
+                      <td class="px-4 py-2.5 font-sans">{{ item.description }}</td>
+                      <td class="px-4 py-2.5 text-center">{{ item.qty }}</td>
+                      <td class="px-4 py-2.5 text-right">{{ req.currency }} {{ item.rate | number:'1.2-2' }}</td>
+                      <td class="px-4 py-2.5 text-right font-bold">{{ req.currency }} {{ item.amount | number:'1.2-2' }}</td>
+                    </tr>
+                  }
+                </tbody>
+                <tfoot>
+                  <tr class="bg-muted/30 border-t border-border font-bold">
+                    <td colspan="3" class="px-4 py-2.5 text-right text-muted-foreground uppercase">Total</td>
+                    <td class="px-4 py-2.5 text-right text-foreground">{{ req.currency }} {{ req.amount | number:'1.2-2' }}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        }
+
+        <!-- Audit Trail timeline -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Audit Trail</h4>
+          <div class="relative pl-6 border-l-2 border-border ml-3 space-y-6">
+            @for (event of req.timeline; track event.status + event.date) {
+              <div class="relative">
+                <!-- Dot indicator -->
+                <div [ngClass]="{
+                  'bg-amber-500': event.status === 'Submitted',
+                  'bg-emerald-500': event.status === 'Approved',
+                  'bg-rose-500': event.status === 'Rejected'
+                }" class="absolute -left-[31px] top-1 w-3 h-3 rounded-full border-2 border-card"></div>
+                
+                <div class="flex flex-col gap-1">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-foreground">{{ event.status }}</span>
+                    <span class="text-[10px] text-muted-foreground font-mono bg-muted px-1.5 py-0.5 rounded border border-border">{{ event.date }}</span>
+                  </div>
+                  <p class="text-xs text-muted-foreground">Action by <span class="font-semibold text-foreground/80">{{ event.user }}</span></p>
+                  @if (event.reason) {
+                    <p class="text-xs text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900 rounded-lg p-2.5 mt-1 leading-relaxed">
+                      {{ event.reason }}
+                    </p>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Rejection inputs form -->
+        @if (req.status === 'Pending' && isRejecting()) {
+          <div class="border-t border-border pt-4 space-y-2.5">
+            <label class="block text-xs font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400">Rejection Reason</label>
+            <textarea 
+              [ngModel]="rejectionReason()" 
+              (ngModelChange)="rejectionReason.set($event)"
+              rows="3" 
+              placeholder="State a specific reason for rejecting this request..." 
+              class="w-full px-3 py-2 bg-card border border-rose-300 dark:border-rose-900 focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 rounded-xl text-xs text-foreground placeholder:text-muted-foreground transition-all focus:outline-none"></textarea>
+            
+            @if (rejectionError()) {
+              <div class="flex items-center gap-2 text-xs text-rose-600 dark:text-rose-400 font-medium">
+                <lucide-icon name="alert-circle" class="w-4 h-4"></lucide-icon>
+                <span>{{ rejectionError() }}</span>
+              </div>
+            }
+            
+            <div class="flex items-center gap-2 justify-end">
+              <button 
+                (click)="isRejecting.set(false)" 
+                class="px-3.5 py-2 border border-border bg-card hover:bg-muted text-muted-foreground hover:text-foreground text-xs font-semibold rounded-xl cursor-pointer transition-all">
+                Cancel
+              </button>
+              <button 
+                (click)="confirmRejection()" 
+                class="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl cursor-pointer transition-all shadow-sm">
+                Confirm Rejection
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- Bottom Actions (only if pending and not rejecting) -->
+        @if (req.status === 'Pending' && !isRejecting()) {
+          <div class="border-t border-border pt-6 mt-auto flex items-center justify-end gap-3 shrink-0">
+            <button 
+              (click)="initiateReject()" 
+              class="px-4 py-2.5 border border-rose-200 hover:border-rose-300 dark:border-rose-900 bg-card hover:bg-rose-50 dark:hover:bg-rose-950/30 text-rose-600 dark:text-rose-400 text-xs font-bold rounded-xl cursor-pointer transition-all shadow-sm">
+              Reject Request
+            </button>
+            <button 
+              (click)="approveRequest(req.id); closeRequestDetails()" 
+              class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl cursor-pointer transition-all shadow-md shadow-blue-500/20 hover:-translate-y-0.5">
+              Approve Request
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </p-drawer>
+
+  <!-- ==================== NEW DELEGATION DRAWER ==================== -->
+  <p-drawer [visible]="isModalOpen" (onHide)="closeModal()" position="right" styleClass="w-full md:w-[95vw]! lg:w-[45vw]! xl:w-[40vw]!">
+    <ng-template pTemplate="header">
+      <div class="py-3 px-6 border-b bg-gradient-to-r from-white via-blue-50 to-white dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-900 flex-shrink-0 w-full flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400">
+            <lucide-icon name="users" class="w-5 h-5"></lucide-icon>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-foreground">New Delegation Rule</h2>
+            <p class="text-xs text-muted-foreground">Create temporary coverage mapping</p>
+          </div>
+        </div>
+        <button (click)="closeModal()" class="inline-flex items-center justify-center gap-2 text-sm font-semibold transition-all hover:bg-muted text-muted-foreground hover:text-foreground rounded-xl h-9 w-9 border border-border cursor-pointer">
+          <lucide-icon name="x" class="w-4 h-4"></lucide-icon>
+        </button>
+      </div>
+    </ng-template>
+
+    <div class="flex flex-col h-full overflow-y-auto p-6 space-y-6">
+      <div class="grid grid-cols-2 gap-4">
+        <!-- Delegatee Select -->
+        <div class="col-span-2 space-y-1">
+          <label class="block text-xs font-bold uppercase tracking-wider text-muted-foreground">Select Delegatee</label>
+          <div class="relative">
+            <select 
+              [ngModel]="selectedEmployeeId()"
+              (ngModelChange)="selectedEmployeeId.set($event)"
+              class="w-full px-3 py-2.5 bg-card border border-border rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all text-foreground cursor-pointer shadow-sm appearance-none pr-8">
+              <option value="">Choose an employee...</option>
+              @for (emp of employees; track emp.id) {
+                <option [value]="emp.id">{{ emp.name }} ({{ emp.email }})</option>
+              }
+            </select>
+            <lucide-icon name="chevron-down" class="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"></lucide-icon>
+          </div>
+          @if (formErrors().employee) {
+            <div class="flex items-center gap-1.5 text-[11px] text-rose-600 dark:text-rose-400 font-medium mt-1">
+              <lucide-icon name="alert-circle" class="w-3.5 h-3.5"></lucide-icon>
+              <span>{{ formErrors().employee }}</span>
+            </div>
+          }
+        </div>
+
+        <!-- Start Date -->
+        <div class="space-y-1">
+          <label class="block text-xs font-bold uppercase tracking-wider text-muted-foreground">Start Date</label>
+          <input 
+            type="date"
+            [ngModel]="startDate()"
+            (ngModelChange)="startDate.set($event)"
+            class="w-full px-3 py-2.5 bg-card border border-border rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all text-foreground shadow-sm">
+        </div>
+
+        <!-- End Date -->
+        <div class="space-y-1">
+          <label class="block text-xs font-bold uppercase tracking-wider text-muted-foreground">End Date</label>
+          <input 
+            type="date"
+            [ngModel]="endDate()"
+            (ngModelChange)="endDate.set($event)"
+            class="w-full px-3 py-2.5 bg-card border border-border rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all text-foreground shadow-sm">
+        </div>
+
+        <!-- Date errors range -->
+        @if (formErrors().dates) {
+          <div class="col-span-2 flex items-center gap-1.5 text-[11px] text-rose-600 dark:text-rose-400 font-medium mt-1">
+            <lucide-icon name="alert-circle" class="w-3.5 h-3.5"></lucide-icon>
+            <span>{{ formErrors().dates }}</span>
+          </div>
+        }
+
+        <!-- Reason -->
+        <div class="col-span-2 space-y-1">
+          <label class="block text-xs font-bold uppercase tracking-wider text-muted-foreground">Reason for delegation</label>
+          <textarea 
+            [ngModel]="reason()"
+            (ngModelChange)="reason.set($event)"
+            rows="3"
+            placeholder="State why this delegation is needed (e.g. Medical leave backup, Vacation coverage...)"
+            class="w-full px-3 py-2 bg-card border border-border rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all text-foreground shadow-sm placeholder:text-muted-foreground"></textarea>
+          @if (formErrors().reason) {
+            <div class="flex items-center gap-1.5 text-[11px] text-rose-600 dark:text-rose-400 font-medium mt-1">
+              <lucide-icon name="alert-circle" class="w-3.5 h-3.5"></lucide-icon>
+              <span>{{ formErrors().reason }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="border-t border-border pt-6 mt-auto flex items-center justify-end gap-3 shrink-0">
+        <button 
+          (click)="closeModal()" 
+          class="px-4 py-2.5 border border-border bg-card hover:bg-muted text-muted-foreground hover:text-foreground text-xs font-semibold rounded-xl cursor-pointer transition-all shadow-sm">
+          Cancel
+        </button>
+        <button 
+          (click)="submitDelegation()" 
+          class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl cursor-pointer transition-all shadow-md shadow-blue-500/20 hover:-translate-y-0.5">
+          Create Rule
+        </button>
+      </div>
+    </div>
+  </p-drawer>
+</div>

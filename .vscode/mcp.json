@@ -1,0 +1,26 @@
+{
+  "mcpServers": {
+    "notebooks": {
+      "command": "node",
+      "args": [
+        "c:\\Users\\Nadeem Akram\\.antigravity-ide\\extensions\\googlecloudtools.datacloud-0.4.1-universal\\mcp_servers\\cli\\mcp_proxy_bundle.js",
+        "notebooks-antigravityide"
+      ]
+    },
+    "visualization": {
+      "command": "node",
+      "args": [
+        "c:\\Users\\Nadeem Akram\\.antigravity-ide\\extensions\\googlecloudtools.datacloud-0.4.1-universal\\mcp_servers\\cli\\mcp_proxy_bundle.js",
+        "visualization-antigravityide"
+      ]
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:\\Users\\Nadeem Akram\\Desktop"
+      ]
+    }
+  }
+}

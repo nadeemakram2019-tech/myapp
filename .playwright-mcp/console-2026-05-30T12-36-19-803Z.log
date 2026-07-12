@@ -1,0 +1,2 @@
+[    6242ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://base44.app/api/apps/68669d30e919487161963ef8/entities/User/me:0
+[    6727ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://base44.app/api/apps/68669d30e919487161963ef8/entities/User/me:0

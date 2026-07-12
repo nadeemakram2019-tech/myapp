@@ -1,0 +1,262 @@
+<div class="max-w-screen-2xl mx-auto p-4 sm:p-6">
+  <div class="flex items-center gap-3 mb-5">
+    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-sm">
+      <lucide-icon name="file-bar-chart-2" class="w-5 h-5 text-white"></lucide-icon>
+    </div>
+    <div>
+      <h1 class="text-xl font-bold text-gray-900">Reports</h1>
+      <p class="text-xs text-gray-500">Analyze and export your business data</p>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+      <div>
+        <label class="text-xs font-medium text-gray-600 block mb-1.5">Report Type</label>
+        <button type="button" class="flex w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 shadow-sm ring-offset-background h-9 text-sm">
+          <span class="pointer-events-none">
+            <div class="flex items-center gap-2">
+              <lucide-icon name="file-text" class="w-3.5 h-3.5"></lucide-icon> Bills
+            </div>
+          </span>
+          <lucide-icon name="chevron-down" class="h-4 w-4 opacity-50"></lucide-icon>
+        </button>
+      </div>
+      <div>
+        <label class="text-xs font-medium text-gray-600 block mb-1.5">Status</label>
+        <button type="button" class="flex w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 shadow-sm ring-offset-background h-9 text-sm">
+          <span class="pointer-events-none">All Statuses</span>
+          <lucide-icon name="chevron-down" class="h-4 w-4 opacity-50"></lucide-icon>
+        </button>
+      </div>
+      <div>
+        <label class="text-xs font-medium text-gray-600 block mb-1.5">Group By</label>
+        <div class="relative">
+          <select [(ngModel)]="selectedGroupBy" (ngModelChange)="onGroupByChange()" class="flex w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 shadow-sm ring-offset-background h-9 text-sm appearance-none focus:outline-none focus:ring-1 focus:ring-ring cursor-pointer">
+            @for (option of groupByOptions; track option.label) {
+              <option [ngValue]="option.value">{{ option.label }}</option>
+            }
+          </select>
+          <lucide-icon name="chevron-down" class="h-4 w-4 opacity-50 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></lucide-icon>
+        </div>
+      </div>
+      <div>
+        <label class="text-xs font-medium text-gray-600 block mb-1.5">Date Range</label>
+        <button class="inline-flex items-center gap-2 whitespace-nowrap rounded-md border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground px-4 py-2 w-full h-9 justify-start text-left font-normal text-sm" type="button">
+          <lucide-icon name="calendar" class="mr-2 h-3.5 w-3.5 text-gray-400"></lucide-icon>
+          <span class="text-gray-400 text-sm">Pick range</span>
+        </button>
+      </div>
+      <div>
+        <label class="text-xs font-medium text-gray-600 block mb-1.5 invisible">Advanced Filters</label>
+        <div class="flex gap-2">
+          <button (click)="isAdvancedFilterOpen = true" class="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium border border-input bg-background shadow-sm px-4 py-2 h-9 flex-1 text-sm gap-2">
+            <lucide-icon name="sliders-horizontal" class="w-4 h-4"></lucide-icon> Advanced Filters
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="relative">
+    <div class="flex items-center gap-2 text-sm text-gray-500 mb-4">
+      <span class="font-semibold text-gray-700">{{ reportRecords.length }}</span> of {{ reportRecords.length }} records
+    </div>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+          <button class="w-full flex items-center justify-between px-5 py-3.5 hover:bg-gray-50 transition-colors">
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
+                <lucide-icon name="trending-up" class="w-4 h-4 text-blue-600"></lucide-icon>
+              </div>
+              <span class="font-semibold text-sm text-gray-800">Bills Over Time</span>
+              <div class="inline-flex items-center rounded-md border font-semibold text-xs text-gray-500 border-gray-200 px-1.5 py-0">Collapse</div>
+            </div>
+            <lucide-icon name="chevron-down" class="w-4 h-4 text-gray-400"></lucide-icon>
+          </button>
+          <div class="border-t border-gray-100">
+            <div class="p-5">
+              <div class="recharts-responsive-container w-full h-[220px] min-w-0">
+                <div class="recharts-wrapper relative cursor-default w-full h-full max-h-[220px] max-w-[1005px]">
+                  <!-- Recharts Static SVG Placeholder -->
+                  <svg class="recharts-surface w-full h-full" width="1005" height="220" viewBox="0 0 1005 220"><defs><clipPath id="recharts11-clip"><rect x="60" y="5" height="185" width="935"></rect></clipPath></defs><defs><linearGradient id="billsGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stop-color="#3B82F6" stop-opacity="0.2"></stop><stop offset="95%" stop-color="#3B82F6" stop-opacity="0"></stop></linearGradient></defs><g class="recharts-cartesian-grid"><g class="recharts-cartesian-grid-horizontal"><line stroke-dasharray="3 3" stroke="#f0f0f0" fill="none" x="60" y="5" width="935" height="185" x1="60" y1="190" x2="995" y2="190"></line><line stroke-dasharray="3 3" stroke="#f0f0f0" fill="none" x="60" y="5" width="935" height="185" x1="60" y1="143.75" x2="995" y2="143.75"></line><line stroke-dasharray="3 3" stroke="#f0f0f0" fill="none" x="60" y="5" width="935" height="185" x1="60" y1="97.5" x2="995" y2="97.5"></line><line stroke-dasharray="3 3" stroke="#f0f0f0" fill="none" x="60" y="5" width="935" height="185" x1="60" y1="51.25" x2="995" y2="51.25"></line><line stroke-dasharray="3 3" stroke="#f0f0f0" fill="none" x="60" y="5" width="935" height="185" x1="60" y1="5" x2="995" y2="5"></line></g></g><g class="recharts-layer recharts-cartesian-axis recharts-xAxis xAxis"><g class="recharts-cartesian-axis-ticks"><g class="recharts-layer recharts-cartesian-axis-tick"><text orientation="bottom" width="935" height="30" stroke="none" font-size="11" x="60" y="198" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="middle" fill="#9ca3af"><tspan x="60" dy="0.71em">Sep 2025</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><text orientation="bottom" width="935" height="30" stroke="none" font-size="11" x="247" y="198" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="middle" fill="#9ca3af"><tspan x="247" dy="0.71em">Oct 2025</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><text orientation="bottom" width="935" height="30" stroke="none" font-size="11" x="434" y="198" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="middle" fill="#9ca3af"><tspan x="434" dy="0.71em">Nov 2025</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><text orientation="bottom" width="935" height="30" stroke="none" font-size="11" x="621" y="198" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="middle" fill="#9ca3af"><tspan x="621" dy="0.71em">Dec 2025</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><text orientation="bottom" width="935" height="30" stroke="none" font-size="11" x="808" y="198" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="middle" fill="#9ca3af"><tspan x="808" dy="0.71em">Jan 2026</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><text orientation="bottom" width="935" height="30" stroke="none" font-size="11" x="982.8359375" y="198" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="middle" fill="#9ca3af"><tspan x="982.8359375" dy="0.71em">Feb 2026</tspan></text></g></g></g><g class="recharts-layer recharts-cartesian-axis recharts-yAxis yAxis"><g class="recharts-cartesian-axis-ticks"><g class="recharts-layer recharts-cartesian-axis-tick"><text orientation="left" width="60" height="185" stroke="none" font-size="11" x="52" y="190" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="end" fill="#9ca3af"><tspan x="52" dy="0.355em">$0k</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><text orientation="left" width="60" height="185" stroke="none" font-size="11" x="52" y="143.75" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="end" fill="#9ca3af"><tspan x="52" dy="0.355em">$5k</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><text orientation="left" width="60" height="185" stroke="none" font-size="11" x="52" y="97.5" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="end" fill="#9ca3af"><tspan x="52" dy="0.355em">$10k</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><text orientation="left" width="60" height="185" stroke="none" font-size="11" x="52" y="51.25" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="end" fill="#9ca3af"><tspan x="52" dy="0.355em">$15k</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><text orientation="left" width="60" height="185" stroke="none" font-size="11" x="52" y="8.25" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="end" fill="#9ca3af"><tspan x="52" dy="0.355em">$20k</tspan></text></g></g></g><g class="recharts-layer recharts-area"><g class="recharts-layer"><path stroke-width="2" fill="url(#billsGrad)" name="Amount" fill-opacity="0.6" width="935" height="185" stroke="none" class="recharts-curve recharts-area-area" d="M60,85.938C122.333,107.236,184.667,128.534,247,128.534C309.333,128.534,371.667,111.568,434,104.438C496.333,97.307,558.667,98.209,621,85.753C683.333,73.296,745.667,20.725,808,20.725C870.333,20.725,932.667,79.971,995,139.218L995,190C932.667,190,870.333,190,808,190C745.667,190,683.333,190,621,190C558.667,190,496.333,190,434,190C371.667,190,309.333,190,247,190C184.667,190,122.333,190,60,190Z"></path><path stroke="#3B82F6" stroke-width="2" fill="none" name="Amount" fill-opacity="0.6" width="935" height="185" class="recharts-curve recharts-area-curve" d="M60,85.938C122.333,107.236,184.667,128.534,247,128.534C309.333,128.534,371.667,111.568,434,104.438C496.333,97.307,558.667,98.209,621,85.753C683.333,73.296,745.667,20.725,808,20.725C870.333,20.725,932.667,79.971,995,139.218"></path></g></g></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <!-- Category Chart -->
+        <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+          <button class="w-full flex items-center justify-between px-5 py-3.5 hover:bg-gray-50 transition-colors">
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
+                <lucide-icon name="pie-chart" class="w-4 h-4 text-green-600"></lucide-icon>
+              </div>
+              <span class="font-semibold text-sm text-gray-800">By Category</span>
+              <div class="inline-flex items-center rounded-md border font-semibold text-xs text-gray-500 border-gray-200 px-1.5 py-0">Collapse</div>
+            </div>
+            <lucide-icon name="chevron-down" class="w-4 h-4 text-gray-400"></lucide-icon>
+          </button>
+          <div class="border-t border-gray-100">
+            <div class="p-5">
+              <div class="recharts-responsive-container w-full h-[200px] min-w-0">
+                <div class="recharts-wrapper relative cursor-default w-full h-full max-h-[200px] max-w-[476px]">
+                  <!-- Recharts Static SVG Placeholder -->
+                  <svg cx="50%" cy="50%" class="recharts-surface w-full h-full" width="476" height="200" viewBox="0 0 476 200"><defs><clipPath id="recharts14-clip"><rect x="5" y="5" height="166" width="466"></rect></clipPath></defs><g class="recharts-layer recharts-pie" tabindex="0"><g class="recharts-layer recharts-pie-sector" tabindex="-1"><path cx="238" cy="88" name="Office Supplies" stroke="#fff" fill="#3B82F6" tabindex="-1" class="recharts-sector" d="M 308,88 A 70,70,0, 0,0, 298.2610678791632,52.38253661386196 L 263.8261719482128,72.73537283451228 A 30,30,0, 0,1, 268,88 Z" role="img"></path></g><g class="recharts-layer recharts-pie-sector" tabindex="-1"><path cx="238" cy="88" name="IT Equipment" stroke="#fff" fill="#10B981" tabindex="-1" class="recharts-sector" d="M 296.98132691881483,50.30115287046711 A 70,70,0, 1,0, 183.63038705502294,132.09019378743287 L 214.69873730929555,106.89579733747124 A 30,30,0, 1,1, 263.2777115366349,71.84335123020018 Z" role="img"></path></g><g class="recharts-layer recharts-pie-sector" tabindex="-1"><path cx="238" cy="88" name="Marketing" stroke="#fff" fill="#F59E0B" tabindex="-1" class="recharts-sector" d="M 185.2022331269084,133.9608073603442 A 70,70,0, 0,0, 233.83928033350458,157.87623638875266 L 236.21683442864483,117.94695845232256 A 30,30,0, 0,1, 215.37238562581788,107.69748886871895 Z" role="img"></path></g><g class="recharts-layer recharts-pie-sector" tabindex="-1"><path cx="238" cy="88" name="Professional Services" stroke="#fff" fill="#EF4444" tabindex="-1" class="recharts-sector" d="M 236.28046041293896,157.9788766958182 A 70,70,0, 0,0, 307.9573578913367,90.44296476917512 L 267.98172481057287,89.04698490107505 A 30,30,0, 0,1, 237.26305446268813,117.99094715535067 Z" role="img"></path></g></g></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Status Chart -->
+        <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+          <button class="w-full flex items-center justify-between px-5 py-3.5 hover:bg-gray-50 transition-colors">
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
+                <lucide-icon name="bar-chart" class="w-4 h-4 text-purple-600"></lucide-icon>
+              </div>
+              <span class="font-semibold text-sm text-gray-800">By Status</span>
+              <div class="inline-flex items-center rounded-md border font-semibold text-xs text-gray-500 border-gray-200 px-1.5 py-0">Collapse</div>
+            </div>
+            <lucide-icon name="chevron-down" class="w-4 h-4 text-gray-400"></lucide-icon>
+          </button>
+          <div class="border-t border-gray-100">
+            <div class="p-5">
+              <div class="recharts-responsive-container w-full h-[200px] min-w-0">
+                <div class="recharts-wrapper relative cursor-default w-full h-full max-h-[200px] max-w-[476px]">
+                  <!-- Recharts Static SVG Placeholder -->
+                  <svg class="recharts-surface w-full h-full" width="476" height="200" viewBox="0 0 476 200"><defs><clipPath id="recharts16-clip"><rect x="40" y="5" height="165" width="431"></rect></clipPath></defs><g class="recharts-cartesian-grid"><g class="recharts-cartesian-grid-horizontal"><line stroke-dasharray="3 3" stroke="#f0f0f0" fill="none" x="40" y="5" width="431" height="165" x1="40" y1="170" x2="471" y2="170"></line><line stroke-dasharray="3 3" stroke="#f0f0f0" fill="none" x="40" y="5" width="431" height="165" x1="40" y1="128.75" x2="471" y2="128.75"></line><line stroke-dasharray="3 3" stroke="#f0f0f0" fill="none" x="40" y="5" width="431" height="165" x1="40" y1="87.5" x2="471" y2="87.5"></line><line stroke-dasharray="3 3" stroke="#f0f0f0" fill="none" x="40" y="5" width="431" height="165" x1="40" y1="46.25" x2="471" y2="46.25"></line><line stroke-dasharray="3 3" stroke="#f0f0f0" fill="none" x="40" y="5" width="431" height="165" x1="40" y1="5" x2="471" y2="5"></line></g></g><g class="recharts-layer recharts-cartesian-axis recharts-xAxis xAxis"><g class="recharts-cartesian-axis-ticks"><g class="recharts-layer recharts-cartesian-axis-tick"><text orientation="bottom" width="431" height="30" stroke="none" font-size="9" x="75.91666666666666" y="178" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="middle" fill="#9ca3af"><tspan x="75.91666666666666" dy="0.71em">Paid</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><text orientation="bottom" width="431" height="30" stroke="none" font-size="9" x="147.75" y="178" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="middle" fill="#9ca3af"><tspan x="147.75" dy="0.71em">Pending Approval</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><text orientation="bottom" width="431" height="30" stroke="none" font-size="9" x="219.58333333333331" y="178" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="middle" fill="#9ca3af"><tspan x="219.58333333333331" dy="0.71em">Approved</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><text orientation="bottom" width="431" height="30" stroke="none" font-size="9" x="291.4166666666667" y="178" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="middle" fill="#9ca3af"><tspan x="291.4166666666667" dy="0.71em">Draft</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><text orientation="bottom" width="431" height="30" stroke="none" font-size="9" x="363.25" y="178" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="middle" fill="#9ca3af"><tspan x="363.25" dy="0.71em">Rejected</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><text orientation="bottom" width="431" height="30" stroke="none" font-size="9" x="435.0833333333333" y="178" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="middle" fill="#9ca3af"><tspan x="435.0833333333333" dy="0.71em">Disputed</tspan></text></g></g></g><g class="recharts-layer recharts-cartesian-axis recharts-yAxis yAxis"><g class="recharts-cartesian-axis-ticks"><g class="recharts-layer recharts-cartesian-axis-tick"><text orientation="left" width="60" height="165" stroke="none" font-size="11" x="32" y="170" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="end" fill="#9ca3af"><tspan x="32" dy="0.355em">0</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><text orientation="left" width="60" height="165" stroke="none" font-size="11" x="32" y="128.75" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="end" fill="#9ca3af"><tspan x="32" dy="0.355em">2</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><text orientation="left" width="60" height="165" stroke="none" font-size="11" x="32" y="87.5" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="end" fill="#9ca3af"><tspan x="32" dy="0.355em">4</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><text orientation="left" width="60" height="165" stroke="none" font-size="11" x="32" y="46.25" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="end" fill="#9ca3af"><tspan x="32" dy="0.355em">6</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><text orientation="left" width="60" height="165" stroke="none" font-size="11" x="32" y="8.25" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="end" fill="#9ca3af"><tspan x="32" dy="0.355em">8</tspan></text></g></g></g><g class="recharts-layer recharts-bar"><g class="recharts-layer recharts-bar-rectangles"><g class="recharts-layer recharts-bar-rectangle"><path x="47.18333333333333" y="46.25" width="57" height="123.75" radius="4,4,0,0" fill="#8B5CF6" name="Count" class="recharts-rectangle" d="M47.18333333333333,50.25A 4,4,0,0,1,51.18333333333333,46.25L 100.18333333333334,46.25A 4,4,0,0,1, 104.18333333333334,50.25L 104.18333333333334,170L 47.18333333333333,170Z"></path></g><g class="recharts-layer recharts-bar-rectangle"><path x="119.01666666666667" y="87.5" width="57" height="82.5" radius="4,4,0,0" fill="#8B5CF6" name="Count" class="recharts-rectangle" d="M119.01666666666667,91.5A 4,4,0,0,1,123.01666666666667,87.5L 172.01666666666665,87.5A 4,4,0,0,1, 176.01666666666665,91.5L 176.01666666666665,170L 119.01666666666667,170Z"></path></g><g class="recharts-layer recharts-bar-rectangle"><path x="190.85" y="66.875" width="57" height="103.125" radius="4,4,0,0" fill="#8B5CF6" name="Count" class="recharts-rectangle" d="M190.85,70.875A 4,4,0,0,1,194.85,66.875L 243.85,66.875A 4,4,0,0,1, 247.85,70.875L 247.85,170L 190.85,170Z"></path></g><g class="recharts-layer recharts-bar-rectangle"><path x="262.68333333333334" y="149.375" width="57" height="20.625" radius="4,4,0,0" fill="#8B5CF6" name="Count" class="recharts-rectangle" d="M262.68333333333334,153.375A 4,4,0,0,1,266.68333333333334,149.375L 315.68333333333334,149.375A 4,4,0,0,1, 319.68333333333334,153.375L 319.68333333333334,170L 262.68333333333334,170Z"></path></g><g class="recharts-layer recharts-bar-rectangle"><path x="334.51666666666665" y="149.375" width="57" height="20.625" radius="4,4,0,0" fill="#8B5CF6" name="Count" class="recharts-rectangle" d="M334.51666666666665,153.375A 4,4,0,0,1,338.51666666666665,149.375L 387.51666666666665,149.375A 4,4,0,0,1, 391.51666666666665,153.375L 391.51666666666665,170L 334.51666666666665,170Z"></path></g><g class="recharts-layer recharts-bar-rectangle"><path x="406.34999999999997" y="149.375" width="57" height="20.625" radius="4,4,0,0" fill="#8B5CF6" name="Count" class="recharts-rectangle" d="M406.34999999999997,153.375A 4,4,0,0,1,410.34999999999997,149.375L 459.34999999999997,149.375A 4,4,0,0,1, 463.34999999999997,153.375L 463.34999999999997,170L 406.34999999999997,170Z"></path></g></g></g></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PrimeNG Table for Data -->
+      <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between px-5 py-3.5 border-b border-gray-100 bg-gray-50 gap-3">
+          <div class="flex items-center gap-2.5">
+            <span class="font-semibold text-sm text-gray-800">Data</span>
+            <span class="text-xs bg-gray-200 text-gray-600 rounded-full px-2 py-0.5 font-medium">{{ reportRecords.length }} records</span>
+            <span class="text-xs text-gray-500">• Total: <span class="font-semibold text-gray-800">{{ totalAmount | currency:'USD':'symbol':'1.0-0' }}</span></span>
+          </div>
+          <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium border bg-blue-600 hover:bg-blue-700 text-white shadow-sm px-3 h-8 text-xs rounded-md">
+            <lucide-icon name="download" class="w-3.5 h-3.5 mr-1.5"></lucide-icon> Export CSV
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <p-table [value]="reportRecords" styleClass="w-full text-sm"
+                   [rowGroupMode]="selectedGroupBy ? 'subheader' : undefined"
+                   [groupRowsBy]="selectedGroupBy || ''"
+                   [sortField]="selectedGroupBy || 'id'"
+                   sortMode="single"
+                   dataKey="id">
+            <ng-template pTemplate="header">
+              <tr class="border-b border-gray-200 bg-gray-50">
+                <th pSortableColumn="id" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap cursor-pointer hover:text-gray-700 hover:bg-gray-100 transition-colors">
+                  <div class="flex items-center gap-1">Bill # <lucide-icon name="arrow-up-down" class="w-3 h-3 text-gray-300"></lucide-icon></div>
+                </th>
+                <th pSortableColumn="vendor" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap cursor-pointer hover:text-gray-700 hover:bg-gray-100 transition-colors">
+                  <div class="flex items-center gap-1">Vendor <lucide-icon name="arrow-up-down" class="w-3 h-3 text-gray-300"></lucide-icon></div>
+                </th>
+                <th pSortableColumn="amount" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap text-right cursor-pointer hover:text-gray-700 hover:bg-gray-100 transition-colors">
+                  <div class="flex items-center justify-end gap-1">Amount <lucide-icon name="arrow-up-down" class="w-3 h-3 text-gray-300"></lucide-icon></div>
+                </th>
+                <th pSortableColumn="category" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap cursor-pointer hover:text-gray-700 hover:bg-gray-100 transition-colors">
+                  <div class="flex items-center gap-1">Category <lucide-icon name="arrow-up-down" class="w-3 h-3 text-gray-300"></lucide-icon></div>
+                </th>
+                <th pSortableColumn="status" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap cursor-pointer hover:text-gray-700 hover:bg-gray-100 transition-colors">
+                  <div class="flex items-center gap-1">Status <lucide-icon name="arrow-up-down" class="w-3 h-3 text-gray-300"></lucide-icon></div>
+                </th>
+                <th pSortableColumn="date" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap cursor-pointer hover:text-gray-700 hover:bg-gray-100 transition-colors">
+                  <div class="flex items-center gap-1">Date <lucide-icon name="arrow-up-down" class="w-3 h-3 text-gray-300"></lucide-icon></div>
+                </th>
+              </tr>
+            </ng-template>
+            
+            <ng-template pTemplate="groupheader" let-record>
+              <tr pRowGroupHeader class="bg-blue-50/40 border-y border-blue-100 cursor-pointer hover:bg-blue-50/80 transition-colors" (click)="toggleGroup($any(record)[selectedGroupBy!])">
+                <td colspan="6" class="px-4 py-3">
+                  <div class="flex items-center gap-2 font-bold text-gray-900">
+                    <button type="button" class="p-0 bg-transparent border-none focus:outline-none flex items-center justify-center">
+                      <lucide-icon [name]="isGroupCollapsed($any(record)[selectedGroupBy!]) ? 'chevron-right' : 'chevron-down'" class="w-4 h-4 text-blue-600"></lucide-icon>
+                    </button>
+                    <span>{{ $any(record)[selectedGroupBy!] }}</span>
+                    <span class="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full ml-2 shadow-sm">
+                       {{ calculateGroupCount($any(record)[selectedGroupBy!]) }} records
+                    </span>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-record let-rowIndex="rowIndex">
+              @if (!selectedGroupBy || !isGroupCollapsed($any(record)[selectedGroupBy!])) {
+                <tr class="border-t border-gray-100 hover:bg-blue-50/30 transition-colors" [ngClass]="rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'">
+                <td class="px-4 py-2.5 text-sm">
+                  <span class="font-mono text-xs font-medium text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">{{ record.id }}</span>
+                </td>
+                <td class="px-4 py-2.5 text-sm">
+                  <span class="text-gray-700">{{ record.vendor }}</span>
+                </td>
+                <td class="px-4 py-2.5 text-sm text-right">
+                  <span class="font-semibold text-gray-900">{{ record.amount | currency:'USD':'symbol':'1.0-0' }}</span>
+                </td>
+                <td class="px-4 py-2.5 text-sm">
+                  <span class="text-gray-700">{{ record.category }}</span>
+                </td>
+                <td class="px-4 py-2.5 text-sm">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border"
+                        [ngClass]="{
+                          'bg-emerald-50 text-emerald-700 border-emerald-200': record.status === 'Paid',
+                          'bg-amber-50 text-amber-700 border-amber-200': record.status === 'Pending Approval',
+                          'bg-blue-50 text-blue-700 border-blue-200': record.status === 'Approved',
+                          'bg-gray-100 text-gray-600 border-gray-200': record.status === 'Draft',
+                          'bg-red-50 text-red-700 border-red-200': record.status === 'Rejected',
+                          'bg-purple-50 text-purple-700 border-purple-200': record.status === 'Disputed'
+                        }">
+                    {{ record.status }}
+                  </span>
+                </td>
+                <td class="px-4 py-2.5 text-sm">
+                  <span class="text-gray-700">{{ record.date }}</span>
+                </td>
+                </tr>
+              }
+            </ng-template>
+
+            <ng-template pTemplate="groupfooter" let-record>
+              @if (!isGroupCollapsed($any(record)[selectedGroupBy!])) {
+                <tr class="bg-gray-50/50 border-y border-gray-100">
+                  <td colspan="2" class="px-4 py-3 text-right font-semibold text-gray-500 text-xs uppercase tracking-wider">Group Total</td>
+                  <td class="px-4 py-3 text-right font-bold text-gray-900">{{ calculateGroupTotal($any(record)[selectedGroupBy!]) | currency:'USD':'symbol':'1.0-0' }}</td>
+                  <td colspan="3" class="bg-gray-50/50"></td>
+                </tr>
+              }
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <tr class="border-t-2 border-gray-300 bg-gray-50">
+                <td class="px-4 py-3 text-sm font-semibold text-gray-800">Total</td>
+                <td class="px-4 py-3 text-sm font-semibold text-gray-800"></td>
+                <td class="px-4 py-3 text-sm font-semibold text-gray-800 text-right">{{ totalAmount | currency:'USD':'symbol':'1.0-0' }}</td>
+                <td class="px-4 py-3 text-sm font-semibold text-gray-800"></td>
+                <td class="px-4 py-3 text-sm font-semibold text-gray-800"></td>
+                <td class="px-4 py-3 text-sm font-semibold text-gray-800"></td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-advanced-filter [isOpen]="isAdvancedFilterOpen" (close)="isAdvancedFilterOpen = false"></app-advanced-filter>

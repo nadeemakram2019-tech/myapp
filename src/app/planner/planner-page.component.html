@@ -1,0 +1,213 @@
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
+  <!-- Header -->
+  <div class="relative overflow-hidden bg-white/80 backdrop-blur-xl border-b border-slate-200/60">
+    <div class="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-purple-600/5 to-cyan-600/5"></div>
+    <div class="relative px-6 lg:px-10 py-8">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-violet-500/25">
+            <lucide-icon name="clipboard-list" class="w-7 h-7 text-white"></lucide-icon>
+          </div>
+          <div>
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">Planner</h1>
+            <p class="text-sm text-slate-500 mt-1 font-medium">Create and manage project briefs and plans</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-slate-100 hover:bg-slate-200 border border-slate-200/60 text-slate-700 text-sm font-semibold rounded-xl transition-all duration-200 hover:shadow-md">
+            <lucide-icon name="download" class="w-4 h-4"></lucide-icon>
+            Export
+          </button>
+          <button class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-violet-500/25 hover:shadow-xl hover:-translate-y-0.5">
+            <lucide-icon name="plus" class="w-4 h-4"></lucide-icon>
+            New Brief
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="flex items-center gap-1 mt-8 p-1 bg-slate-100/50 rounded-xl w-fit">
+        @for (tab of tabs; track tab) {
+          <button
+            (click)="activeTab = tab"
+            [class]="activeTab === tab
+              ? 'px-5 py-2.5 bg-white text-violet-600 font-semibold rounded-lg shadow-sm transition-all duration-200'
+              : 'px-5 py-2.5 text-slate-500 hover:text-slate-700 font-medium transition-all duration-200'">
+            {{ tab }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="flex-1 overflow-y-auto p-6 lg:px-10 py-8">
+    <div class="max-w-6xl mx-auto space-y-6">
+
+      <!-- Search & Filters -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+        <div class="relative flex-1 max-w-md">
+          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <div class="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center">
+              <lucide-icon name="search" class="w-4 h-4 text-violet-600"></lucide-icon>
+            </div>
+          </div>
+          <input type="text" placeholder="Search by plan name or ID..." class="w-full pl-14 pr-4 py-3 bg-white border border-slate-200/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all font-medium text-slate-900 placeholder:text-slate-400 shadow-sm">
+        </div>
+        <button class="inline-flex items-center justify-center gap-2 px-5 py-3 bg-white border border-slate-200/60 hover:bg-slate-50 text-slate-700 text-sm font-semibold rounded-xl transition-all duration-200 shadow-sm hover:shadow-md">
+          <lucide-icon name="sliders-horizontal" class="w-4 h-4"></lucide-icon>
+          Filters
+        </button>
+      </div>
+
+      <!-- Stats Row -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 border border-slate-200/60 shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center">
+              <lucide-icon name="file-text" class="w-5 h-5 text-violet-600"></lucide-icon>
+            </div>
+            <div>
+              <p class="text-2xl font-bold text-slate-900">12</p>
+              <p class="text-xs text-slate-500 font-medium">Total Briefs</p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 border border-slate-200/60 shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+              <lucide-icon name="zap" class="w-5 h-5 text-amber-600"></lucide-icon>
+            </div>
+            <div>
+              <p class="text-2xl font-bold text-slate-900">4</p>
+              <p class="text-xs text-slate-500 font-medium">In Progress</p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 border border-slate-200/60 shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
+              <lucide-icon name="circle-check" class="w-5 h-5 text-emerald-600"></lucide-icon>
+            </div>
+            <div>
+              <p class="text-2xl font-bold text-slate-900">6</p>
+              <p class="text-xs text-slate-500 font-medium">Completed</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plans List -->
+      <div class="space-y-3">
+        @for (plan of filteredPlans; track plan.id) {
+          <div class="group bg-white/90 backdrop-blur-sm border border-slate-200/60 hover:border-violet-300/60 hover:shadow-lg hover:shadow-violet-500/10 cursor-pointer transition-all duration-300 rounded-2xl overflow-hidden">
+            <div class="flex flex-col lg:flex-row lg:items-center p-5 gap-5">
+              <!-- Left: Plan Info -->
+              <div class="flex items-center gap-4 flex-1 min-w-0">
+                <div class="relative">
+                  <span class="flex shrink-0 overflow-hidden rounded-2xl h-14 w-14 border-2 border-slate-100 shadow-sm"
+                        [ngClass]="{
+                          'bg-gradient-to-br from-purple-100 to-purple-200': plan.color === 'purple',
+                          'bg-gradient-to-br from-blue-100 to-blue-200': plan.color === 'blue',
+                          'bg-gradient-to-br from-emerald-100 to-emerald-200': plan.color === 'emerald',
+                          'bg-gradient-to-br from-orange-100 to-orange-200': plan.color === 'orange',
+                          'bg-gradient-to-br from-rose-100 to-rose-200': plan.color === 'rose',
+                          'bg-gradient-to-br from-slate-100 to-slate-200': !plan.color
+                        }">
+                    <div class="flex h-full w-full items-center justify-center font-bold text-lg"
+                         [ngClass]="{
+                           'text-purple-600': plan.color === 'purple',
+                           'text-blue-600': plan.color === 'blue',
+                           'text-emerald-600': plan.color === 'emerald',
+                           'text-orange-600': plan.color === 'orange',
+                           'text-rose-600': plan.color === 'rose',
+                           'text-slate-600': !plan.color
+                         }">
+                      {{ plan.initials }}
+                    </div>
+                  </span>
+                  @if (plan.status === 'In Progress') {
+                    <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 border-2 border-white rounded-full flex items-center justify-center">
+                      <lucide-icon name="clock" class="w-2.5 h-2.5 text-white"></lucide-icon>
+                    </span>
+                  } @else if (plan.status === 'Completed') {
+                    <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full flex items-center justify-center">
+                      <lucide-icon name="check" class="w-2.5 h-2.5 text-white"></lucide-icon>
+                    </span>
+                  } @else if (plan.status === 'Draft') {
+                    <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-slate-400 border-2 border-white rounded-full"></span>
+                  }
+                </div>
+                <div class="min-w-0 flex flex-col">
+                  <h3 class="text-lg font-bold text-slate-900 truncate group-hover:text-violet-600 transition-colors">{{ plan.title }}</h3>
+                  <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+                    <span class="text-xs font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">{{ plan.id }}</span>
+                    <span class="text-xs text-slate-500 font-medium">{{ plan.date }}</span>
+                    @if (plan.type) {
+                      <span class="text-xs text-slate-400">•</span>
+                      <span class="text-xs text-slate-600 font-medium">{{ plan.type }}</span>
+                    }
+                  </div>
+                  <p class="text-sm text-slate-600 mt-2 line-clamp-1">{{ plan.description }}</p>
+                </div>
+              </div>
+
+              <!-- Middle: Progress & Status -->
+              <div class="flex items-center gap-3 flex-wrap">
+                <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200/60">
+                  <lucide-icon name="list-checks" class="w-4 h-4 text-slate-400"></lucide-icon>
+                  <span class="text-xs text-slate-600 font-semibold">{{ plan.completedTasks }}/{{ plan.tasks }} tasks</span>
+                </div>
+
+                <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-semibold text-xs"
+                     [ngClass]="getStatusBadgeClass(plan.status)">
+                  @if (plan.status === 'In Progress') {
+                    <lucide-icon name="refresh-cw" class="w-3.5 h-3.5 animate-spin"></lucide-icon>
+                  } @else if (plan.status === 'Completed') {
+                    <lucide-icon name="circle-check" class="w-3.5 h-3.5"></lucide-icon>
+                  } @else if (plan.status === 'Draft') {
+                    <lucide-icon name="pencil" class="w-3.5 h-3.5"></lucide-icon>
+                  }
+                  <span class="uppercase tracking-wide">{{ plan.status }}</span>
+                </div>
+              </div>
+
+              <!-- Right: Progress Bar & Actions -->
+              <div class="flex items-center justify-between lg:justify-end gap-4 lg:gap-6 border-t border-slate-100 lg:border-t-0 pt-4 lg:pt-0">
+                <div class="text-right min-w-[100px]">
+                  <div class="flex items-center justify-end gap-2 mb-1">
+                    <span class="text-xs font-semibold text-slate-500">{{ getProgressPercent(plan) }}%</span>
+                  </div>
+                  <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full rounded-full transition-all duration-500"
+                         [ngClass]="{
+                           'bg-violet-500': plan.status === 'In Progress',
+                           'bg-emerald-500': plan.status === 'Completed',
+                           'bg-slate-300': plan.status === 'Draft'
+                         }"
+                         [style.width.%]="getProgressPercent(plan)">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="relative group/menu">
+                  <button class="inline-flex items-center justify-center w-10 h-10 text-slate-400 hover:text-violet-600 hover:bg-violet-50 rounded-xl transition-all duration-200" type="button">
+                    <lucide-icon name="ellipsis" class="w-5 h-5"></lucide-icon>
+                  </button>
+                  <div class="absolute right-0 top-full mt-2 hidden group-hover/menu:block w-44 bg-white border border-slate-100 shadow-xl shadow-slate-200/50 rounded-xl z-20 py-1.5">
+                    <button class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-violet-600 transition-colors flex items-center gap-3 rounded-t-xl">
+                       <lucide-icon name="eye" class="w-4 h-4"></lucide-icon> View Details
+                    </button>
+                    <button class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-violet-600 transition-colors flex items-center gap-3 rounded-b-xl">
+                       <lucide-icon name="file-text" class="w-4 h-4"></lucide-icon> Open Brief
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

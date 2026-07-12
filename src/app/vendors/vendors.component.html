@@ -1,0 +1,189 @@
+<main class="flex-1 overflow-y-auto">
+  <div class="min-h-screen bg-gray-50/50 p-4 sm:p-6 lg:p-8">
+    <div class="max-w-full mx-auto">
+      <!-- Header Section -->
+      <div class="mb-8 flex justify-between items-center">
+        <div class="flex items-center gap-4">
+          <a routerLink="/Dashboard">
+            <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 w-9 rounded-xl">
+              <lucide-icon name="arrow-left" class="w-4 h-4"></lucide-icon>
+            </button>
+          </a>
+          <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center">
+            <lucide-icon name="building-2" class="w-7 h-7 text-blue-600"></lucide-icon>
+          </div>
+          <div>
+            <h1 class="text-4xl font-bold text-gray-900 mb-1 tracking-tight">Vendors</h1>
+            <p class="text-gray-600 text-lg">Manage your company's vendors and suppliers</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="flex flex-col items-end">
+            <button (click)="syncWithQBO()" class="inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground rounded-2xl px-4 py-3 text-base font-semibold h-11 relative">
+              <lucide-icon name="refresh-cw" class="w-5 h-5 mr-2"></lucide-icon>
+              Sync with QBO
+              <span class="absolute -top-1 -right-1 cursor-help">
+                <lucide-icon name="circle-check" class="w-5 h-5 text-green-600 bg-white rounded-full"></lucide-icon>
+              </span>
+            </button>
+            <span class="text-xs text-gray-500 mt-1">Last synced: {{ lastSyncTime }}</span>
+          </div>
+          <button (click)="addNewVendor()" class="inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-primary/90 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-2xl px-6 py-3 text-base font-semibold shadow-lg shadow-blue-500/25 h-11">
+            <lucide-icon name="plus" class="w-5 h-5 mr-2"></lucide-icon>
+            Add New Vendor
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div class="rounded-xl text-card-foreground bg-white/60 backdrop-blur-sm shadow-lg border-0">
+          <div class="p-4">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-gray-100 text-blue-500">
+                <lucide-icon name="users" class="w-6 h-6"></lucide-icon>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500 font-medium">Total Vendors</p>
+                <p class="text-2xl font-bold text-gray-900">{{ stats.totalVendors }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-xl text-card-foreground bg-white/60 backdrop-blur-sm shadow-lg border-0">
+          <div class="p-4">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-gray-100 text-green-500">
+                <lucide-icon name="building" class="w-6 h-6"></lucide-icon>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500 font-medium">Active Vendors</p>
+                <p class="text-2xl font-bold text-gray-900">{{ stats.activeVendors }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-xl text-card-foreground bg-white/60 backdrop-blur-sm shadow-lg border-0">
+          <div class="p-4">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-gray-100 text-orange-500">
+                <lucide-icon name="alert-triangle" class="w-6 h-6"></lucide-icon>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500 font-medium">Pending Bills</p>
+                <p class="text-2xl font-bold text-gray-900">{{ stats.pendingBills }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-xl text-card-foreground bg-white/60 backdrop-blur-sm shadow-lg border-0">
+          <div class="p-4">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-gray-100 text-purple-500">
+                <lucide-icon name="file-text" class="w-6 h-6"></lucide-icon>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500 font-medium">Total Billed</p>
+                <p class="text-2xl font-bold text-gray-900">${{ stats.totalBilled }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="bg-white p-3 rounded-xl border shadow-sm mb-4">
+        <div class="relative">
+          <lucide-icon name="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none"></lucide-icon>
+          <input 
+            type="text" 
+            (input)="onSearch($event)"
+            class="flex border px-3 py-1 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm w-full h-12 pl-12 pr-4 text-base bg-white rounded-xl shadow-sm border-gray-200 transition-all duration-300 ease-in-out hover:shadow-md focus:ring-2 focus:ring-blue-500 focus:shadow-lg" 
+            placeholder="Search vendors by name or email..." 
+            [value]="searchQuery">
+        </div>
+      </div>
+
+      <!-- Vendors List -->
+      <div class="grid grid-cols-1 gap-4">
+        <div *ngFor="let vendor of vendors" class="group">
+          <div class="text-card-foreground shadow bg-white border border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all duration-300 cursor-pointer group rounded-xl overflow-hidden">
+            <div class="p-6">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4 flex-1 min-w-0">
+                  <span class="relative flex shrink-0 overflow-hidden rounded-full w-14 h-14 shadow-sm flex-shrink-0">
+                    <img class="aspect-square h-full w-full" [alt]="vendor.name" [src]="vendor.avatar">
+                  </span>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-3 mb-2">
+                      <h3 class="font-bold text-xl text-gray-900 group-hover:text-blue-600 transition-colors truncate">{{ vendor.name }}</h3>
+                      <div class="flex flex-wrap items-center gap-2">
+                        <div class="inline-flex items-center rounded-md border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 bg-green-100 text-green-800 border-green-200 text-xs">
+                          {{ vendor.status }}
+                        </div>
+                        <div [ngClass]="vendor.type === 'Business' ? 'bg-blue-100 text-blue-800 border-blue-200' : 'bg-purple-100 text-purple-800 border-purple-200'" class="inline-flex items-center rounded-md border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-xs">
+                          <lucide-icon name="building" class="w-3 h-3 mr-1"></lucide-icon>
+                          {{ vendor.type }}
+                        </div>
+                        <div class="inline-flex items-center rounded-md border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 bg-gray-50 text-gray-600 border-gray-200 text-xs">
+                          {{ vendor.currency }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-6 text-sm text-gray-600">
+                      <div *ngIf="vendor.email" class="flex items-center gap-2">
+                        <lucide-icon name="mail" class="w-4 h-4 text-blue-500"></lucide-icon>
+                        <span class="truncate max-w-48">{{ vendor.email }}</span>
+                      </div>
+                      <div *ngIf="vendor.phone" class="flex items-center gap-2">
+                        <lucide-icon name="phone" class="w-4 h-4 text-green-500"></lucide-icon>
+                        <span>{{ vendor.phone }}</span>
+                      </div>
+                      <div *ngIf="vendor.location" class="flex items-center gap-2">
+                        <lucide-icon name="map-pin" class="w-4 h-4 text-purple-500"></lucide-icon>
+                        <span class="truncate max-w-48">{{ vendor.location }}</span>
+                      </div>
+                      <div *ngIf="vendor.website" class="flex items-center gap-2">
+                        <lucide-icon name="globe" class="w-4 h-4 text-orange-500"></lucide-icon>
+                        <a [href]="vendor.website" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-700 truncate max-w-32">{{ vendor.website }}</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3 ml-4">
+                  <div class="text-right text-sm text-gray-500">Added {{ vendor.addedDate }}</div>
+                  <div *ngIf="vendor.verificationStatus" [ngClass]="{
+                    'bg-yellow-50 text-yellow-700 border-yellow-200': vendor.verificationStatus === 'Pending Verification',
+                    'bg-red-50 text-red-700 border-red-200': vendor.verificationStatus === 'Account Missing'
+                  }" class="inline-flex items-center rounded-md border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-xs">
+                    {{ vendor.verificationStatus }}
+                  </div>
+                  <div *ngIf="vendor.qboStatus" [ngClass]="getQBOStatusClass(vendor.qboStatus)" class="flex items-center gap-1.5 px-2 py-1 rounded-md cursor-pointer">
+                    <lucide-icon [name]="getQBOStatusIcon(vendor.qboStatus)" [class]="vendor.qboStatus === 'syncing' ? 'w-3 h-3 animate-spin' : 'w-3 h-3'"></lucide-icon>
+                    <span class="text-xs font-medium">QBO</span>
+                  </div>
+                  <div class="flex gap-2">
+                    <button (click)="editVendor(vendor.id)" class="inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:text-accent-foreground h-8 rounded-md px-3 text-xs hover:bg-blue-50 hover:border-blue-300">
+                      <lucide-icon name="square-pen" class="w-4 h-4 mr-1"></lucide-icon>
+                      Edit
+                    </button>
+                    <button (click)="viewVendor(vendor.id)" class="inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-primary-foreground shadow h-8 rounded-md px-3 text-xs bg-blue-600 hover:bg-blue-700">
+                      <lucide-icon name="eye" class="w-4 h-4 mr-1"></lucide-icon>
+                      View
+                    </button>
+                  </div>
+                  <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-9 w-9 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                    <lucide-icon name="ellipsis-vertical" class="w-4 h-4"></lucide-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

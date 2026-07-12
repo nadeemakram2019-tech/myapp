@@ -1,0 +1,591 @@
+<div class="h-full flex flex-col bg-slate-50/50 dark:bg-zinc-950 overflow-y-auto transition-colors duration-300">
+  
+  <!-- Breadcrumb and Top Action Bar -->
+  <header class="bg-white dark:bg-zinc-900 border-b border-slate-200 dark:border-zinc-800 px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors">
+    <div class="flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-zinc-450">
+      <lucide-icon name="home" class="w-3.5 h-3.5 text-slate-400"></lucide-icon>
+      <span>Home</span>
+      <span class="text-slate-300 dark:text-zinc-700">&gt;&gt;</span>
+      <span>Reconciliation</span>
+      <span class="text-slate-300 dark:text-zinc-700">&gt;&gt;</span>
+      <span class="text-slate-800 dark:text-zinc-200 font-semibold">Card Transactions</span>
+    </div>
+
+    <button (click)="customizeView()" class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-xs font-semibold rounded-xl transition-all shadow-sm cursor-pointer">
+      <lucide-icon name="settings" class="w-3.5 h-3.5"></lucide-icon>
+      <span>Customize</span>
+    </button>
+  </header>
+
+  <!-- Navigation Sub-Tabs Bar -->
+  <div class="bg-white dark:bg-zinc-900 border-b border-slate-200 dark:border-zinc-800 px-6 py-1 flex gap-2 transition-colors overflow-x-auto scrollbar-none">
+    @for (tab of tabs; track tab.name) {
+      <button 
+        (click)="setActiveTab(tab.name)"
+        class="relative px-5 py-3.5 text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap"
+        [ngClass]="activeTab === tab.name ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-slate-500 hover:text-slate-800 dark:hover:text-zinc-300'"
+      >
+        <span>{{ tab.name }}</span>
+        @if (tab.count) {
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-zinc-800 text-slate-500 dark:text-zinc-400 font-mono">
+            {{ tab.count }}
+          </span>
+        }
+        <!-- Tab bottom highlight border & arrow indicator -->
+        @if (activeTab === tab.name) {
+          <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400"></div>
+          <div class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white dark:bg-zinc-900 border-t border-l border-slate-200 dark:border-zinc-800 rotate-45 z-10"></div>
+        }
+      </button>
+    }
+  </div>
+
+  <!-- Tab Content Area -->
+  <div class="flex-1 p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
+    
+    @if (activeTab === 'Summary') {
+      <div class="space-y-6">
+
+        <!-- ROW 1: Requires Action, Reconciliation Summary, Payment Summary -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Card 1: Requires Action -->
+          <section class="card-tactile bg-white dark:bg-zinc-900 border border-slate-200/60 dark:border-zinc-800/80 rounded-3xl p-6 shadow-sm">
+            <div class="flex items-center gap-3 mb-5">
+              <div class="w-1.5 h-6 bg-orange-500 rounded-full"></div>
+              <h2 class="text-base font-bold text-slate-900 dark:text-zinc-50 tracking-tight">Requires Action</h2>
+            </div>
+            
+            <div class="space-y-3">
+              @for (action of actionItems; track action.label) {
+                <div class="flex items-center justify-between p-3.5 bg-slate-50/50 dark:bg-zinc-950/20 border border-slate-100 dark:border-zinc-800/40 rounded-2xl hover:border-orange-200 dark:hover:border-orange-900/30 transition-all">
+                  <div class="flex items-center gap-3">
+                    <span class="text-lg font-extrabold text-orange-500 font-mono">{{ action.count }}</span>
+                    <div class="flex items-center gap-1.5">
+                      @if (action.icon === 'user') {
+                        <lucide-icon name="user" class="w-3.5 h-3.5 text-slate-400"></lucide-icon>
+                      } @else if (action.icon === 'database') {
+                        <lucide-icon name="database" class="w-3.5 h-3.5 text-slate-400"></lucide-icon>
+                      }
+                      <span class="text-xs font-semibold text-slate-700 dark:text-zinc-300">{{ action.label }}</span>
+                    </div>
+                  </div>
+                  <button (click)="triggerReview(action.label)" class="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer">
+                    Review &gt;
+                  </button>
+                </div>
+              }
+            </div>
+          </section>
+
+          <!-- Card 2: Reconciliation Summary (Donut Split) -->
+          <section class="card-tactile bg-white dark:bg-zinc-900 border border-slate-200/60 dark:border-zinc-800/80 rounded-3xl p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-5">
+              <div class="flex items-center gap-3">
+                <div class="w-1.5 h-6 bg-orange-500 rounded-full"></div>
+                <h2 class="text-base font-bold text-slate-900 dark:text-zinc-50 tracking-tight">Reconciliation Summary</h2>
+              </div>
+              <div class="flex items-center gap-2">
+                <select class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-0.5 text-[9px] font-bold font-mono text-slate-600 dark:text-zinc-450">
+                  <option>USD</option>
+                </select>
+                <select class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-0.5 text-[9px] font-bold text-slate-600 dark:text-zinc-450">
+                  <option>Last 3 months</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-around gap-4 py-2">
+              <!-- Donut Chart Circle -->
+              <div class="relative w-36 h-36 rounded-full flex items-center justify-center shadow-inner"
+                   style="background: conic-gradient(#EF4444 0% 5%, #8B5CF6 5% 100%)">
+                <div class="absolute inset-4.5 bg-white dark:bg-zinc-900 rounded-full flex flex-col items-center justify-center text-center">
+                  <span class="text-[9px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">Total (15)</span>
+                  <span class="text-sm font-extrabold text-slate-900 dark:text-zinc-150 font-mono tracking-tight">$21,537.27</span>
+                </div>
+              </div>
+
+              <!-- Legends on Right -->
+              <div class="space-y-2 w-full max-w-[150px]">
+                <div class="flex items-center justify-between gap-2 text-xs">
+                  <div class="flex items-center gap-1.5">
+                    <div class="w-2.5 h-2.5 bg-rose-500 rounded-full"></div>
+                    <span class="text-slate-500 dark:text-zinc-450 font-medium">Unreconciled <strong class="font-mono text-[10px]">(5)</strong></span>
+                  </div>
+                  <span class="font-mono font-extrabold text-rose-500">$983.18</span>
+                </div>
+                <div class="flex items-center justify-between gap-2 text-xs">
+                  <div class="flex items-center gap-1.5">
+                    <div class="w-2.5 h-2.5 bg-indigo-500 rounded-full"></div>
+                    <span class="text-slate-500 dark:text-zinc-450 font-medium">Reconciled <strong class="font-mono text-[10px]">(10)</strong></span>
+                  </div>
+                  <span class="font-mono font-extrabold text-indigo-500">$20,554.07</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Card 3: Payment Summary (Line Chart Placeholder) -->
+          <section class="card-tactile bg-white dark:bg-zinc-900 border border-slate-200/60 dark:border-zinc-800/80 rounded-3xl p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-5">
+              <div class="flex items-center gap-3">
+                <div class="w-1.5 h-6 bg-orange-500 rounded-full"></div>
+                <h2 class="text-base font-bold text-slate-900 dark:text-zinc-50 tracking-tight">Payment Summary</h2>
+              </div>
+              <div class="flex items-center gap-2">
+                <select class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-0.5 text-[9px] font-bold text-slate-600 dark:text-zinc-450">
+                  <option>USD</option>
+                </select>
+                <select class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-0.5 text-[9px] font-bold text-slate-600 dark:text-zinc-450">
+                  <option>This Year</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Custom Vector SVG Line Chart with Tooltip -->
+            <div class="relative h-44 pb-2">
+              <svg class="w-full h-full" viewBox="0 0 400 120" fill="none">
+                <!-- Grid Lines -->
+                <line x1="0" y1="20" x2="400" y2="20" stroke="#f1f5f9" stroke-width="1" class="dark:stroke-zinc-800/30"></line>
+                <line x1="0" y1="50" x2="400" y2="50" stroke="#f1f5f9" stroke-width="1" class="dark:stroke-zinc-800/30"></line>
+                <line x1="0" y1="80" x2="400" y2="80" stroke="#f1f5f9" stroke-width="1" class="dark:stroke-zinc-800/30"></line>
+                <line x1="0" y1="110" x2="400" y2="110" stroke="#e2e8f0" stroke-width="1.5" class="dark:stroke-zinc-800/80"></line>
+
+                <!-- Line 1: Total Transactions (blue) -->
+                <path d="M 0 50 Q 50 20 100 45 T 200 30 T 300 55 T 400 25" stroke="#3B82F6" stroke-width="2.5" fill="none"></path>
+                <!-- Line 2: Reconciled Transactions (green) -->
+                <path d="M 0 70 Q 50 48 100 68 T 200 52 T 300 80 T 400 48" stroke="#10B981" stroke-width="2.5" fill="none"></path>
+                <!-- Line 3: Unreconciled Transactions (red) -->
+                <path d="M 0 100 Q 50 110 100 98 T 200 95 T 300 105 T 400 90" stroke="#EF4444" stroke-width="2" fill="none"></path>
+
+                <!-- Hover Point & Indicator for Aug -->
+                <circle cx="270" cy="55" r="4.5" fill="#EF4444" stroke="#ffffff" stroke-width="1.5"></circle>
+                <line x1="270" y1="10" x2="270" y2="110" stroke="#EF4444" stroke-width="1" stroke-dasharray="2 2"></line>
+              </svg>
+
+              <!-- Absolute Tooltip popup matching Figma -->
+              <div class="absolute top-0 left-1/2 -translate-x-10 bg-slate-900/90 dark:bg-zinc-950/95 text-[9px] font-bold text-white px-2.5 py-1.5 rounded-lg shadow-lg flex flex-col z-20 border border-slate-700/50">
+                <span class="text-[7px] text-slate-400 uppercase tracking-wider">Aug</span>
+                <span class="text-rose-400 font-mono mt-0.5">Non-Reconciled Amount: 3000</span>
+              </div>
+            </div>
+
+            <!-- Month labels -->
+            <div class="flex justify-between px-1 text-[9px] font-bold text-slate-400 dark:text-zinc-550 font-mono">
+              <span>Jan</span>
+              <span>Feb</span>
+              <span>Mar</span>
+              <span>Apr</span>
+              <span>May</span>
+              <span>Jun</span>
+              <span>Jul</span>
+              <span>Aug</span>
+              <span>Sep</span>
+              <span>Oct</span>
+              <span>Nov</span>
+              <span>Dec</span>
+            </div>
+
+            <!-- Legend -->
+            <div class="flex justify-center gap-4 text-[9px] font-bold text-slate-500 dark:text-zinc-450 mt-4">
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-blue-500 rounded-sm"></span>Total transactions</span>
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-emerald-500 rounded-sm"></span>Reconciled Transactions</span>
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-rose-500 rounded-sm"></span>Unreconciled Transactions</span>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- ROW 2: Reconciled, Not Reconciled, Payment Methods -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+          <!-- Card 4: Reconciled (Donut) -->
+          <section class="card-tactile bg-white dark:bg-zinc-900 border border-slate-200/60 dark:border-zinc-800/80 rounded-3xl p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-5">
+              <div class="flex items-center gap-3">
+                <div class="w-1.5 h-6 bg-orange-500 rounded-full"></div>
+                <h2 class="text-base font-bold text-slate-900 dark:text-zinc-50 tracking-tight">Reconciled</h2>
+              </div>
+              <div class="flex items-center gap-2">
+                <select class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-0.5 text-[9px] font-bold font-mono text-slate-600 dark:text-zinc-450">
+                  <option>USD</option>
+                </select>
+                <select class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-0.5 text-[9px] font-bold text-slate-600 dark:text-zinc-450">
+                  <option>Last 3 months</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-6 py-2">
+              <!-- Donut circular outline -->
+              <div class="relative w-32 h-32 rounded-full flex items-center justify-center"
+                   style="background: conic-gradient(#A78BFA 0% 40%, #8B5CF6 40% 100%)">
+                <div class="absolute inset-4 bg-white dark:bg-zinc-900 rounded-full flex flex-col items-center justify-center text-center">
+                  <span class="text-[8px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">Total (23)</span>
+                  <span class="text-xs font-extrabold text-slate-900 dark:text-zinc-150 font-mono">$21,537.27</span>
+                </div>
+              </div>
+
+              <!-- List details on right -->
+              <div class="flex-1 space-y-2.5">
+                <div class="p-2 bg-indigo-50/30 dark:bg-indigo-950/10 border border-indigo-100/40 dark:border-indigo-900/10 rounded-xl">
+                  <span class="block text-[9px] font-bold text-indigo-500 uppercase tracking-wider">Auto</span>
+                  <span class="block text-xs font-extrabold font-mono text-slate-900 dark:text-zinc-100">13,678 USD <span class="text-[9px] font-medium text-slate-400 dark:text-zinc-500 font-sans">(8 Trans.)</span></span>
+                </div>
+                <div class="p-2 bg-purple-50/30 dark:bg-purple-950/10 border border-purple-100/40 dark:border-purple-900/10 rounded-xl">
+                  <span class="block text-[9px] font-bold text-purple-500 uppercase tracking-wider">Manual</span>
+                  <span class="block text-xs font-extrabold font-mono text-slate-900 dark:text-zinc-100">17,367.8 USD <span class="text-[9px] font-medium text-slate-400 dark:text-zinc-500 font-sans">(15 Trans.)</span></span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="flex justify-center gap-4 text-[9px] font-bold text-slate-400 dark:text-zinc-550 mt-3">
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-indigo-500 rounded-full"></span>Auto</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-purple-400 rounded-full"></span>Manual</span>
+            </div>
+          </section>
+
+          <!-- Card 5: Not Reconciled (Donut) -->
+          <section class="card-tactile bg-white dark:bg-zinc-900 border border-slate-200/60 dark:border-zinc-800/80 rounded-3xl p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-5">
+              <div class="flex items-center gap-3">
+                <div class="w-1.5 h-6 bg-orange-500 rounded-full"></div>
+                <h2 class="text-base font-bold text-slate-900 dark:text-zinc-50 tracking-tight">Not Reconciled</h2>
+              </div>
+              <div class="flex items-center gap-2">
+                <select class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-0.5 text-[9px] font-bold font-mono text-slate-600 dark:text-zinc-450">
+                  <option>USD</option>
+                </select>
+                <select class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-0.5 text-[9px] font-bold text-slate-600 dark:text-zinc-450">
+                  <option>Last 3 months</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-6 py-2">
+              <div class="relative w-32 h-32 rounded-full flex items-center justify-center"
+                   style="background: conic-gradient(#F472B6 0% 35%, #818CF8 35% 100%)">
+                <div class="absolute inset-4 bg-white dark:bg-zinc-900 rounded-full flex flex-col items-center justify-center text-center">
+                  <span class="text-[8px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">Total (45)</span>
+                  <span class="text-xs font-extrabold text-slate-900 dark:text-zinc-150 font-mono">$21,537.27</span>
+                </div>
+              </div>
+
+              <div class="flex-1 space-y-2.5">
+                <div class="p-2 bg-indigo-50/30 dark:bg-indigo-950/10 border border-indigo-100/40 dark:border-indigo-900/10 rounded-xl">
+                  <span class="block text-[9px] font-bold text-indigo-400 uppercase tracking-wider">Pending</span>
+                  <span class="block text-xs font-extrabold font-mono text-slate-900 dark:text-zinc-100">13,678 USD <span class="text-[9px] font-medium text-slate-400 dark:text-zinc-500 font-sans">(8 Trans.)</span></span>
+                </div>
+                <div class="p-2 bg-pink-50/30 dark:bg-pink-950/10 border border-pink-100/40 dark:border-pink-900/10 rounded-xl">
+                  <span class="block text-[9px] font-bold text-pink-400 uppercase tracking-wider">Missing</span>
+                  <span class="block text-xs font-extrabold font-mono text-slate-900 dark:text-zinc-100">17,367.8 USD <span class="text-[9px] font-medium text-slate-400 dark:text-zinc-500 font-sans">(15 Trans.)</span></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-center gap-4 text-[9px] font-bold text-slate-400 dark:text-zinc-550 mt-3">
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-indigo-400 rounded-full"></span>Pending</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-pink-400 rounded-full"></span>Missing</span>
+            </div>
+          </section>
+
+          <!-- Card 6: Payment Methods (Horizontal list) -->
+          <section class="card-tactile bg-white dark:bg-zinc-900 border border-slate-200/60 dark:border-zinc-800/80 rounded-3xl p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-5">
+              <div class="flex items-center gap-3">
+                <div class="w-1.5 h-6 bg-orange-500 rounded-full"></div>
+                <h2 class="text-base font-bold text-slate-900 dark:text-zinc-50 tracking-tight">Payment Methods</h2>
+              </div>
+              <div class="flex items-center gap-2">
+                <select class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-0.5 text-[9px] font-bold font-mono text-slate-600 dark:text-zinc-450">
+                  <option>All</option>
+                </select>
+                <select class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-0.5 text-[9px] font-bold text-slate-600 dark:text-zinc-450">
+                  <option>Last 3 months</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="space-y-2.5">
+              @for (method of paymentMethods; track method.brand) {
+                <div class="flex items-center gap-3">
+                  <!-- Brand name/icon placeholder -->
+                  <div class="w-10 h-6 bg-slate-100 dark:bg-zinc-800 text-[8px] font-extrabold text-slate-600 dark:text-zinc-350 rounded border border-slate-200/40 flex items-center justify-center font-mono">
+                    {{ method.logoText }}
+                  </div>
+
+                  <!-- Horizontal bar -->
+                  <div class="flex-1 h-3.5 bg-slate-50 dark:bg-zinc-850 rounded-lg overflow-hidden relative">
+                    <div class="h-full rounded-lg" [ngClass]="method.barColor" [style.width.%]="method.percentage"></div>
+                  </div>
+
+                  <!-- Right values -->
+                  <div class="text-right w-24 shrink-0">
+                    <span class="block text-[10px] font-extrabold font-mono text-slate-900 dark:text-zinc-100 leading-none">{{ method.amount }}</span>
+                    <span class="block text-[8px] text-slate-400 dark:text-zinc-550 leading-none mt-0.5">{{ method.paymentsText }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- Legend summary -->
+            <div class="flex justify-center gap-4 text-[9px] font-bold text-slate-400 dark:text-zinc-550 mt-4 border-t border-slate-100 dark:border-zinc-800 pt-3">
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-blue-600 rounded-sm"></span>195.70K USD (9)</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-teal-500 rounded-sm"></span>853.70K CAD (27)</span>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- ROW 3: Refunds Overview, Deposits -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+          <!-- Card 7: Refunds Overview (Multi-column bar chart) -->
+          <section class="card-tactile bg-white dark:bg-zinc-900 border border-slate-200/60 dark:border-zinc-800/80 rounded-3xl p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-5">
+              <div class="flex items-center gap-3">
+                <div class="w-1.5 h-6 bg-orange-500 rounded-full"></div>
+                <h2 class="text-base font-bold text-slate-900 dark:text-zinc-50 tracking-tight">Refunds Overview</h2>
+              </div>
+              <div class="flex items-center gap-2">
+                <select class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-0.5 text-[9px] font-bold font-mono text-slate-600 dark:text-zinc-450">
+                  <option>All</option>
+                </select>
+                <select class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-0.5 text-[9px] font-bold text-slate-600 dark:text-zinc-450">
+                  <option>This Year</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- CSS Column Group Chart -->
+            <div class="relative h-48 border-b border-slate-200 dark:border-zinc-800 pb-3 flex items-end justify-between px-2">
+              <!-- Grid lines background -->
+              <div class="absolute inset-0 flex flex-col justify-between pointer-events-none pb-3">
+                <div class="border-t border-slate-100 dark:border-zinc-800/30 w-full h-0"></div>
+                <div class="border-t border-slate-100 dark:border-zinc-800/30 w-full h-0"></div>
+                <div class="border-t border-slate-100 dark:border-zinc-800/30 w-full h-0"></div>
+                <div class="border-t border-slate-100 dark:border-zinc-800/30 w-full h-0"></div>
+              </div>
+
+              <!-- Bar groups loop -->
+              @for (item of refunds; track item.month) {
+                <div class="flex flex-col items-center flex-1 z-10">
+                  <div class="flex items-end gap-0.5 h-36">
+                    <div class="w-1.5 bg-purple-500 rounded-t-xs" [style.height.%]="item.cad" title="CAD: {{item.cad}}K"></div>
+                    <div class="w-1.5 bg-blue-500 rounded-t-xs" [style.height.%]="item.usd" title="USD: {{item.usd}}K"></div>
+                    <div class="w-1.5 bg-indigo-500 rounded-t-xs" [style.height.%]="item.gbp" title="GBP: {{item.gbp}}K"></div>
+                  </div>
+                  <span class="text-[9px] font-bold text-slate-400 dark:text-zinc-500 mt-2 font-mono">{{ item.month }}</span>
+                </div>
+              }
+            </div>
+
+            <!-- Legend -->
+            <div class="flex justify-center gap-6 text-[9px] font-bold text-slate-400 dark:text-zinc-550 mt-3">
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-purple-500 rounded-sm"></span>195.70K CAD (20)</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-blue-500 rounded-sm"></span>853.70K USD (12)</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-indigo-500 rounded-sm"></span>214.25K GBP (12)</span>
+            </div>
+          </section>
+
+          <!-- Card 8: Deposits -->
+          <section class="card-tactile bg-white dark:bg-zinc-900 border border-slate-200/60 dark:border-zinc-800/80 rounded-3xl p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-5">
+              <div class="flex items-center gap-3">
+                <div class="w-1.5 h-6 bg-orange-500 rounded-full"></div>
+                <h2 class="text-base font-bold text-slate-900 dark:text-zinc-50 tracking-tight">Deposits</h2>
+              </div>
+              <div class="flex items-center gap-2">
+                <select class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-0.5 text-[9px] font-bold font-mono text-slate-600 dark:text-zinc-450">
+                  <option>All</option>
+                </select>
+                <select class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-0.5 text-[9px] font-bold text-slate-600 dark:text-zinc-450">
+                  <option>Last 6 months</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- CSS Deposits Column Chart -->
+            <div class="relative h-48 border-b border-slate-200 dark:border-zinc-800 pb-3 flex items-end justify-around px-4">
+              <!-- Grid background -->
+              <div class="absolute inset-0 flex flex-col justify-between pointer-events-none pb-3">
+                <div class="border-t border-slate-100 dark:border-zinc-800/30 w-full h-0"></div>
+                <div class="border-t border-slate-100 dark:border-zinc-800/30 w-full h-0"></div>
+                <div class="border-t border-slate-100 dark:border-zinc-800/30 w-full h-0"></div>
+                <div class="border-t border-slate-100 dark:border-zinc-800/30 w-full h-0"></div>
+              </div>
+
+              <!-- Columns loop -->
+              @for (item of deposits; track item.month) {
+                <div class="flex flex-col items-center flex-1 max-w-[45px] z-10 relative">
+                  <!-- Tooltip over March -->
+                  @if (item.month === 'Mar') {
+                    <div class="absolute bottom-36 left-1/2 -translate-x-1/2 bg-slate-900/90 text-white text-[8px] font-bold px-2 py-1 rounded shadow-md z-20 whitespace-nowrap border border-slate-700">
+                      March 2024 <span class="block text-emerald-400 text-center mt-0.5">49k USD</span>
+                    </div>
+                    <!-- Indicator line -->
+                    <div class="absolute bottom-0 top-0 w-px bg-emerald-500 border-dashed border-l border-emerald-500 z-10 pointer-events-none"></div>
+                  }
+                  
+                  <div class="flex items-end gap-1 h-36">
+                    <div class="w-2.5 bg-blue-500 rounded-t-xs" [style.height.%]="item.cad"></div>
+                    <div class="w-2.5 bg-emerald-500 rounded-t-xs" [style.height.%]="item.usd"></div>
+                    <div class="w-2.5 bg-purple-500 rounded-t-xs" [style.height.%]="item.gbp"></div>
+                  </div>
+                  <span class="text-[9px] font-bold text-slate-400 dark:text-zinc-500 mt-2 font-mono">{{ item.month }}</span>
+                </div>
+              }
+            </div>
+
+            <!-- Legend -->
+            <div class="flex justify-center gap-6 text-[9px] font-bold text-slate-400 dark:text-zinc-550 mt-3">
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-blue-500 rounded-sm"></span>195.70K CAD (20)</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-emerald-500 rounded-sm"></span>853.70K USD (54)</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-purple-500 rounded-sm"></span>214.25K GBP (37)</span>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- ROW 4: Deposit Match Summary, Billing Summary, Billing Amount -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+          <!-- Card 9: Deposit Match Summary -->
+          <section class="card-tactile bg-white dark:bg-zinc-900 border border-slate-200/60 dark:border-zinc-800/80 rounded-3xl p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-5">
+              <div class="flex items-center gap-3">
+                <div class="w-1.5 h-6 bg-orange-500 rounded-full"></div>
+                <h2 class="text-base font-bold text-slate-900 dark:text-zinc-50 tracking-tight">Deposit Match Summary</h2>
+              </div>
+              <div class="flex items-center gap-2">
+                <select class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-0.5 text-[9px] font-bold font-mono text-slate-600 dark:text-zinc-450">
+                  <option>CAD</option>
+                </select>
+                <select class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-0.5 text-[9px] font-bold text-slate-600 dark:text-zinc-450">
+                  <option>This Month</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-around gap-4 py-2">
+              <div class="relative w-32 h-32 rounded-full flex items-center justify-center shadow-inner"
+                   style="background: conic-gradient(#0ea5e9 0% 55%, #10B981 55% 75%, #F59E0B 75% 90%, #8B5CF6 90% 100%)">
+                <div class="absolute inset-4.5 bg-white dark:bg-zinc-900 rounded-full flex flex-col items-center justify-center text-center">
+                  <span class="text-[8px] font-bold text-slate-400 dark:text-zinc-550 uppercase">Total</span>
+                  <span class="text-sm font-extrabold text-slate-950 dark:text-zinc-100 font-mono">44,000 CAD</span>
+                </div>
+              </div>
+
+              <!-- Legends list -->
+              <div class="space-y-1.5 text-[10px] font-semibold text-slate-500 dark:text-zinc-450 w-32">
+                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-sky-500 rounded-full shrink-0"></span>Match CAD <strong class="font-mono text-slate-800 dark:text-zinc-250 ml-auto">(5)</strong></div>
+                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-emerald-500 rounded-full shrink-0"></span>Partial CAD <strong class="font-mono text-slate-800 dark:text-zinc-250 ml-auto">(3)</strong></div>
+                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-amber-500 rounded-full shrink-0"></span>No Match CAD <strong class="font-mono text-slate-800 dark:text-zinc-250 ml-auto">(2)</strong></div>
+                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-purple-500 rounded-full shrink-0"></span>Disputed CAD <strong class="font-mono text-slate-800 dark:text-zinc-250 ml-auto">(12)</strong></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Card 10: Billing Summary -->
+          <section class="card-tactile bg-white dark:bg-zinc-900 border border-slate-200/60 dark:border-zinc-800/80 rounded-3xl p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-5">
+              <div class="flex items-center gap-3">
+                <div class="w-1.5 h-6 bg-orange-500 rounded-full"></div>
+                <h2 class="text-base font-bold text-slate-900 dark:text-zinc-50 tracking-tight">Billing Summary</h2>
+              </div>
+              <div class="flex items-center gap-2">
+                <select class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-0.5 text-[9px] font-bold font-mono text-slate-600 dark:text-zinc-450">
+                  <option>CAD</option>
+                </select>
+                <select class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-0.5 text-[9px] font-bold text-slate-600 dark:text-zinc-450">
+                  <option>This Month</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-around gap-4 py-2">
+              <div class="relative w-32 h-32 rounded-full flex items-center justify-center shadow-inner"
+                   style="background: conic-gradient(#F59E0B 0% 45%, #EF4444 45% 65%, #10B981 65% 80%, #3B82F6 80% 92%, #8B5CF6 92% 100%)">
+                <div class="absolute inset-4.5 bg-white dark:bg-zinc-900 rounded-full flex flex-col items-center justify-center text-center">
+                  <span class="text-[8px] font-bold text-slate-400 dark:text-zinc-550 uppercase">Total</span>
+                  <span class="text-sm font-extrabold text-slate-950 dark:text-zinc-100 font-mono">3,850 CAD</span>
+                </div>
+              </div>
+
+              <!-- Legends list -->
+              <div class="space-y-1 text-[9px] font-semibold text-slate-500 dark:text-zinc-450 w-36">
+                <div class="flex items-center gap-1"><span class="w-2 h-2 bg-amber-500 rounded-full shrink-0"></span>MC Access Fee</div>
+                <div class="flex items-center gap-1"><span class="w-2 h-2 bg-rose-500 rounded-full shrink-0"></span>V INTL Super Prem CNP</div>
+                <div class="flex items-center gap-1"><span class="w-2 h-2 bg-emerald-500 rounded-full shrink-0"></span>USD Border Fee</div>
+                <div class="flex items-center gap-1"><span class="w-2 h-2 bg-blue-500 rounded-full shrink-0"></span>Assessments</div>
+                <div class="flex items-center gap-1"><span class="w-2 h-2 bg-purple-500 rounded-full shrink-0"></span>MC Digital</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Card 11: Billing Amount -->
+          <section class="card-tactile bg-white dark:bg-zinc-900 border border-slate-200/60 dark:border-zinc-800/80 rounded-3xl p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-5">
+              <div class="flex items-center gap-3">
+                <div class="w-1.5 h-6 bg-orange-500 rounded-full"></div>
+                <h2 class="text-base font-bold text-slate-900 dark:text-zinc-50 tracking-tight">Billing Amount</h2>
+              </div>
+              <div class="flex items-center gap-2">
+                <select class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-0.5 text-[9px] font-bold font-mono text-slate-600 dark:text-zinc-450">
+                  <option>All</option>
+                </select>
+                <select class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-0.5 text-[9px] font-bold text-slate-600 dark:text-zinc-450">
+                  <option>Last 6 months</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Custom Column Group -->
+            <div class="relative h-44 border-b border-slate-200 dark:border-zinc-800 pb-3 flex items-end justify-between px-2">
+              <!-- Grid lines background -->
+              <div class="absolute inset-0 flex flex-col justify-between pointer-events-none pb-3">
+                <div class="border-t border-slate-100 dark:border-zinc-800/30 w-full h-0"></div>
+                <div class="border-t border-slate-100 dark:border-zinc-800/30 w-full h-0"></div>
+                <div class="border-t border-slate-100 dark:border-zinc-800/30 w-full h-0"></div>
+              </div>
+
+              <!-- Bar groups loop -->
+              @for (item of billingAmounts; track item.month) {
+                <div class="flex flex-col items-center flex-1 z-10">
+                  <div class="flex items-end gap-1 h-32">
+                    <div class="w-2.5 bg-rose-500 rounded-t-sm" [style.height.%]="item.cad"></div>
+                    <div class="w-2.5 bg-indigo-500 rounded-t-sm" [style.height.%]="item.usd"></div>
+                  </div>
+                  <span class="text-[9px] font-bold text-slate-400 dark:text-zinc-500 mt-2 font-mono">{{ item.month }}</span>
+                </div>
+              }
+            </div>
+
+            <!-- Legend -->
+            <div class="flex justify-center gap-6 text-[9px] font-bold text-slate-400 dark:text-zinc-555 mt-3">
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-rose-500 rounded-sm"></span>12,340 CAD</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-indigo-500 rounded-sm"></span>15,867 USD</span>
+            </div>
+          </section>
+
+        </div>
+
+      </div>
+    } @else {
+      <!-- Placeholder views for other sub-tabs -->
+      <div class="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-3xl p-12 text-center space-y-4 shadow-sm">
+        <div class="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto">
+          <lucide-icon name="clipboard-list" class="w-8 h-8"></lucide-icon>
+        </div>
+        <h3 class="text-lg font-bold text-slate-800 dark:text-zinc-100">{{ activeTab }} View</h3>
+        <p class="text-sm text-slate-500 dark:text-zinc-450 max-w-md mx-auto">
+          This sub-tab visualizes payment details, items tracking, and database records for reconciliation. Standard data lists and export facilities will load here.
+        </p>
+        <button (click)="setActiveTab('Summary')" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm shadow-blue-500/20 cursor-pointer">
+          Back to Summary Dashboard
+        </button>
+      </div>
+    }
+
+  </div>
+</div>

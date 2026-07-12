@@ -1,0 +1,502 @@
+<div class="h-full flex flex-col bg-slate-50/50 dark:bg-zinc-950 overflow-y-auto transition-colors duration-300">
+  <!-- Top Navigation Header -->
+  <header class="sticky top-0 z-30 flex items-center justify-between border-b border-slate-200 dark:border-zinc-900 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md px-6 py-4 transition-colors">
+    <div class="flex items-center gap-3">
+      <!-- PaymyTuition Logo / Brand Info -->
+      <div class="flex items-center gap-2">
+        <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-amber-500 to-orange-600 text-white font-extrabold text-sm shadow-md">
+          PmT
+        </div>
+        <div class="hidden sm:block">
+          <span class="block text-sm font-bold tracking-tight text-slate-900 dark:text-zinc-50">PaymyTuition</span>
+          <span class="block text-[0.6rem] font-medium text-slate-500 dark:text-zinc-400">POWERED BY MTFX</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="flex items-center gap-4">
+      <button class="relative p-2 text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-xl transition-all cursor-pointer">
+        <lucide-icon name="bell" class="w-5 h-5"></lucide-icon>
+        <span class="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white ring-2 ring-white dark:ring-zinc-900">
+          6
+        </span>
+      </button>
+
+      <button class="p-2 text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-xl transition-all cursor-pointer">
+        <lucide-icon name="settings" class="w-5 h-5"></lucide-icon>
+      </button>
+
+      <div class="h-8 w-px bg-slate-200 dark:bg-zinc-800"></div>
+
+      <div class="flex items-center gap-2">
+        <div class="h-9 w-9 overflow-hidden rounded-full border border-slate-200 dark:border-zinc-800 bg-slate-150 dark:bg-zinc-800 flex items-center justify-center text-xs font-bold text-slate-700 dark:text-zinc-350">
+          JD
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Space -->
+  <div class="flex-1 p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
+    <!-- Breadcrumb and Customization Controls -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-zinc-450">
+        <lucide-icon name="home" class="w-3.5 h-3.5 text-slate-400"></lucide-icon>
+        <span>Home</span>
+        <span class="text-slate-300 dark:text-zinc-700">&gt;&gt;</span>
+        <span class="text-slate-800 dark:text-zinc-200 font-semibold">Dashboard</span>
+      </div>
+
+      <button (click)="customizeDashboard()" class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-xs font-semibold rounded-xl transition-all shadow-sm cursor-pointer">
+        <lucide-icon name="settings" class="w-3.5 h-3.5"></lucide-icon>
+        <span>Customize</span>
+      </button>
+    </div>
+
+    <!-- Widgets Grid: symmetric 2 columns -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      <!-- COLUMN 1 -->
+      <div class="space-y-6">
+        
+        <!-- WIDGET 1: Action Items -->
+        <section class="card-tactile bg-white dark:bg-zinc-900 border border-slate-200/60 dark:border-zinc-800/80 rounded-3xl p-6 shadow-sm">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-1.5 h-6 bg-amber-500 rounded-full"></div>
+            <h2 class="text-base font-bold text-slate-900 dark:text-zinc-50 tracking-tight">Action Items</h2>
+          </div>
+
+          <!-- Table Header -->
+          <div class="flex justify-between border-b border-slate-100 dark:border-zinc-800 pb-2 mb-3 text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
+            <span>Items</span>
+            <span class="text-right">Count</span>
+          </div>
+
+          <!-- Item Rows -->
+          <div class="space-y-3">
+            @for (item of actionItems; track item.name) {
+              <div class="flex items-center justify-between group hover:bg-slate-50/50 dark:hover:bg-zinc-950/20 p-2 rounded-2xl transition-all">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl flex items-center justify-center transition-colors" [ngClass]="item.iconBg">
+                    <lucide-icon [name]="item.icon" class="w-5 h-5" [ngClass]="item.iconColor"></lucide-icon>
+                  </div>
+                  <a href="javascript:void(0)" class="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline">
+                    {{ item.name }}
+                  </a>
+                </div>
+                <span class="px-3 py-1 text-xs font-extrabold font-mono rounded-full" [ngClass]="[item.badgeBg, item.badgeColor]">
+                  {{ item.count }}
+                </span>
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- WIDGET 2: Collections (Monthly Dual Bar Chart) -->
+        <section class="card-tactile bg-white dark:bg-zinc-900 border border-slate-200/60 dark:border-zinc-800/80 rounded-3xl p-6 shadow-sm">
+          <div class="flex items-center justify-between mb-5">
+            <div class="flex items-center gap-3">
+              <div class="w-1.5 h-6 bg-amber-500 rounded-full"></div>
+              <h2 class="text-base font-bold text-slate-900 dark:text-zinc-50 tracking-tight">Collections</h2>
+            </div>
+            <span class="text-xs font-semibold text-slate-400 dark:text-zinc-505 font-mono">2024</span>
+          </div>
+
+          <!-- Custom CSS Chart Container -->
+          <div class="relative h-64 border-b border-slate-200 dark:border-zinc-800 pb-4 mb-4 flex items-end justify-between px-2">
+            <!-- Grid lines background -->
+            <div class="absolute inset-0 flex flex-col justify-between pointer-events-none pb-4">
+              <div class="border-t border-slate-100 dark:border-zinc-800/30 w-full h-0"></div>
+              <div class="border-t border-slate-100 dark:border-zinc-800/30 w-full h-0"></div>
+              <div class="border-t border-slate-100 dark:border-zinc-800/30 w-full h-0"></div>
+              <div class="border-t border-slate-100 dark:border-zinc-800/30 w-full h-0"></div>
+              <div class="border-t border-slate-100 dark:border-zinc-800/30 w-full h-0"></div>
+            </div>
+
+            <!-- Chart Columns -->
+            <!-- Jan -->
+            <div class="flex flex-col items-center flex-1 z-10">
+              <div class="flex items-end gap-1.5 h-48">
+                <div class="w-3 bg-blue-600 dark:bg-blue-500 rounded-t-sm hover:opacity-80 transition-opacity" style="height: 35%" title="Invoiced: 15K"></div>
+                <div class="w-3 bg-indigo-600 dark:bg-indigo-500 rounded-t-sm hover:opacity-80 transition-opacity" style="height: 48%" title="Collected: 22K"></div>
+              </div>
+              <span class="text-[10px] font-bold text-slate-400 dark:text-zinc-500 mt-2">Jan</span>
+            </div>
+
+            <!-- Feb -->
+            <div class="flex flex-col items-center flex-1 z-10">
+              <div class="flex items-end gap-1.5 h-48">
+                <div class="w-3 bg-blue-600 dark:bg-blue-500 rounded-t-sm hover:opacity-80 transition-opacity" style="height: 48%" title="Invoiced: 20K"></div>
+                <div class="w-3 bg-indigo-600 dark:bg-indigo-500 rounded-t-sm hover:opacity-80 transition-opacity" style="height: 38%" title="Collected: 15K"></div>
+              </div>
+              <span class="text-[10px] font-bold text-slate-400 dark:text-zinc-500 mt-2">Feb</span>
+            </div>
+
+            <!-- Mar -->
+            <div class="flex flex-col items-center flex-1 z-10">
+              <div class="flex items-end gap-1.5 h-48">
+                <div class="w-3 bg-blue-600 dark:bg-blue-500 rounded-t-sm hover:opacity-80 transition-opacity" style="height: 52%" title="Invoiced: 22K"></div>
+                <div class="w-3 bg-indigo-600 dark:bg-indigo-500 rounded-t-sm hover:opacity-80 transition-opacity" style="height: 32%" title="Collected: 12K"></div>
+              </div>
+              <span class="text-[10px] font-bold text-slate-400 dark:text-zinc-500 mt-2">Mar</span>
+            </div>
+
+            <!-- Apr -->
+            <div class="flex flex-col items-center flex-1 z-10">
+              <div class="flex items-end gap-1.5 h-48">
+                <div class="w-3 bg-blue-600 dark:bg-blue-500 rounded-t-sm hover:opacity-80 transition-opacity" style="height: 72%" title="Invoiced: 30K"></div>
+                <div class="w-3 bg-indigo-600 dark:bg-indigo-500 rounded-t-sm hover:opacity-80 transition-opacity" style="height: 22%" title="Collected: 8K"></div>
+              </div>
+              <span class="text-[10px] font-bold text-slate-400 dark:text-zinc-500 mt-2">Apr</span>
+            </div>
+
+            <!-- May -->
+            <div class="flex flex-col items-center flex-1 z-10">
+              <div class="flex items-end gap-1.5 h-48">
+                <div class="w-3 bg-blue-600 dark:bg-blue-500 rounded-t-sm hover:opacity-80 transition-opacity" style="height: 48%" title="Invoiced: 20K"></div>
+                <div class="w-3 bg-indigo-600 dark:bg-indigo-500 rounded-t-sm hover:opacity-80 transition-opacity" style="height: 38%" title="Collected: 15K"></div>
+              </div>
+              <span class="text-[10px] font-bold text-slate-400 dark:text-zinc-500 mt-2">May</span>
+            </div>
+
+            <!-- Jun -->
+            <div class="flex flex-col items-center flex-1 z-10">
+              <div class="flex items-end gap-1.5 h-48">
+                <div class="w-3 bg-blue-600 dark:bg-blue-500 rounded-t-sm hover:opacity-80 transition-opacity" style="height: 65%" title="Invoiced: 27K"></div>
+                <div class="w-3 bg-indigo-600 dark:bg-indigo-500 rounded-t-sm hover:opacity-80 transition-opacity" style="height: 52%" title="Collected: 22K"></div>
+              </div>
+              <span class="text-[10px] font-bold text-slate-400 dark:text-zinc-500 mt-2">Jun</span>
+            </div>
+          </div>
+
+          <!-- Chart Legend -->
+          <div class="flex justify-center items-center gap-6 text-xs mt-3">
+            <div class="flex items-center gap-2">
+              <div class="w-3.5 h-3.5 bg-blue-600 dark:bg-blue-500 rounded-sm"></div>
+              <span class="text-slate-600 dark:text-zinc-400">Invoiced <strong class="font-mono text-slate-900 dark:text-zinc-100">48.5K CAD</strong></span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="w-3.5 h-3.5 bg-indigo-600 dark:bg-indigo-500 rounded-sm"></div>
+              <span class="text-slate-600 dark:text-zinc-400">Collected <strong class="font-mono text-slate-900 dark:text-zinc-100">39.5K CAD</strong></span>
+            </div>
+          </div>
+        </section>
+
+        <!-- WIDGET 3: Paid (Customer list) -->
+        <section class="card-tactile bg-white dark:bg-zinc-900 border border-slate-200/60 dark:border-zinc-800/80 rounded-3xl p-6 shadow-sm">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+            <div class="flex items-center gap-3">
+              <div class="w-1.5 h-6 bg-amber-500 rounded-full"></div>
+              <h2 class="text-base font-bold text-slate-900 dark:text-zinc-50 tracking-tight">Paid</h2>
+              <span class="text-[11px] px-2 py-0.5 bg-slate-100 dark:bg-zinc-800 rounded-full text-slate-500 dark:text-zinc-400">Customers <strong class="font-mono text-slate-800 dark:text-zinc-200">5</strong></span>
+              <span class="text-[11px] px-2 py-0.5 bg-slate-100 dark:bg-zinc-800 rounded-full text-slate-500 dark:text-zinc-400">Income <strong class="font-mono text-slate-800 dark:text-zinc-200">1.85k</strong></span>
+            </div>
+
+            <!-- Currency & timeframe selection -->
+            <div class="flex items-center gap-2">
+              <select [(ngModel)]="selectedCurrency" class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-1 text-[10px] font-bold font-mono text-slate-700 dark:text-zinc-300">
+                <option value="CAD">CAD</option>
+                <option value="USD">USD</option>
+              </select>
+              <select [(ngModel)]="selectedPeriod" class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-1 text-[10px] font-bold text-slate-700 dark:text-zinc-300">
+                <option value="This Month">This Month</option>
+                <option value="Last Month">Last Month</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- List Header -->
+          <div class="flex justify-between border-b border-slate-100 dark:border-zinc-800 pb-2 mb-3 text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
+            <span>Customer Name</span>
+            <span class="text-right">Total</span>
+          </div>
+
+          <!-- Customer Paid Rows -->
+          <div class="space-y-4">
+            @for (cust of paidCustomers; track cust.name) {
+              <div class="flex items-center justify-between gap-4">
+                <span class="text-xs font-semibold text-blue-600 dark:text-blue-400 w-28 shrink-0">{{ cust.name }}</span>
+                <div class="flex-1 h-3 bg-slate-100 dark:bg-zinc-800/80 rounded-full overflow-hidden">
+                  <div class="h-full rounded-full bg-emerald-500" [style.width.%]="cust.percentage"></div>
+                </div>
+                <span class="text-xs font-extrabold font-mono text-slate-900 dark:text-zinc-100 text-right w-16">{{ cust.amount }}</span>
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- WIDGET 4: Team Activities -->
+        <section class="card-tactile bg-white dark:bg-zinc-900 border border-slate-200/60 dark:border-zinc-800/80 rounded-3xl p-6 shadow-sm">
+          <div class="flex items-center justify-between mb-5">
+            <div class="flex items-center gap-3">
+              <div class="w-1.5 h-6 bg-amber-500 rounded-full"></div>
+              <h2 class="text-base font-bold text-slate-900 dark:text-zinc-50 tracking-tight">Team Activities</h2>
+            </div>
+
+            <!-- Date Picker range display/trigger -->
+            <div class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl text-xs text-slate-700 dark:text-zinc-300">
+              <lucide-icon name="calendar" class="w-3.5 h-3.5 text-slate-400"></lucide-icon>
+              <span class="font-mono font-medium">{{ selectedDateRange }}</span>
+            </div>
+          </div>
+
+          <!-- Activities Table -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-slate-100 dark:border-zinc-800 text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
+                  <th class="py-2.5 pb-2">Team Member</th>
+                  <th class="py-2.5 pb-2 text-center">Task Created</th>
+                  <th class="py-2.5 pb-2 text-center">Invoices Touched</th>
+                  <th class="py-2.5 pb-2 text-center">Email Sent</th>
+                  <th class="py-2.5 pb-2 text-center">Calls Made</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-zinc-850">
+                @for (member of paginatedActivities; track member.name) {
+                  <tr class="hover:bg-slate-50/50 dark:hover:bg-zinc-950/20 transition-all">
+                    <!-- Member Avatar & Name -->
+                    <td class="py-3 flex items-center gap-2">
+                      <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 font-extrabold text-[10px] flex items-center justify-center border border-blue-200/40">
+                        {{ member.avatar }}
+                      </div>
+                      <div>
+                        <span class="block font-semibold text-slate-900 dark:text-zinc-150">{{ member.name }}</span>
+                        <span class="block text-[9px] text-slate-400 dark:text-zinc-500 font-medium">{{ member.role }}</span>
+                      </div>
+                    </td>
+
+                    <!-- Tasks Created -->
+                    <td class="py-3 text-center font-bold text-rose-500 font-mono">
+                      {{ member.created }}
+                    </td>
+
+                    <!-- Invoices Touched -->
+                    <td class="py-3 text-center font-bold text-blue-500 font-mono">
+                      {{ member.touched }}
+                    </td>
+
+                    <!-- Emails Sent -->
+                    <td class="py-3 text-center font-bold text-emerald-500 font-mono">
+                      {{ member.emails }}
+                    </td>
+
+                    <!-- Calls Made -->
+                    <td class="py-3 text-center font-bold text-emerald-600 dark:text-emerald-400 font-mono">
+                      {{ member.calls }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination Footer -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t border-slate-100 dark:border-zinc-800">
+            <!-- Show Item selector -->
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] text-slate-400 dark:text-zinc-500">Show</span>
+              <select class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-1 text-[10px] font-bold text-slate-700 dark:text-zinc-350">
+                <option value="3">03</option>
+                <option value="5">05</option>
+                <option value="10">10</option>
+              </select>
+            </div>
+
+            <!-- Page indicators -->
+            <div class="flex items-center gap-1.5">
+              <button (click)="changeActivityPage(1)" class="w-8 h-8 rounded-lg border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800 flex items-center justify-center text-xs font-semibold text-slate-500 cursor-pointer disabled:opacity-50 disabled:pointer-events-none" [disabled]="selectedActivityPage === 1">
+                &lt;&lt;
+              </button>
+              <button (click)="changeActivityPage(selectedActivityPage - 1)" class="w-8 h-8 rounded-lg border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800 flex items-center justify-center text-xs font-semibold text-slate-500 cursor-pointer disabled:opacity-50 disabled:pointer-events-none" [disabled]="selectedActivityPage === 1">
+                &lt;
+              </button>
+              <div class="w-8 h-8 rounded-lg bg-blue-500 text-white font-bold flex items-center justify-center text-xs">
+                {{ selectedActivityPage }}
+              </div>
+              <button (click)="changeActivityPage(selectedActivityPage + 1)" class="w-8 h-8 rounded-lg border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800 flex items-center justify-center text-xs font-semibold text-slate-500 cursor-pointer disabled:opacity-50 disabled:pointer-events-none" [disabled]="selectedActivityPage === totalActivityPages">
+                &gt;
+              </button>
+              <button (click)="changeActivityPage(totalActivityPages)" class="w-8 h-8 rounded-lg border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800 flex items-center justify-center text-xs font-semibold text-slate-500 cursor-pointer disabled:opacity-50 disabled:pointer-events-none" [disabled]="selectedActivityPage === totalActivityPages">
+                &gt;&gt;
+              </button>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- COLUMN 2 -->
+      <div class="space-y-6">
+
+        <!-- WIDGET 5: A/R Aging -->
+        <section class="card-tactile bg-white dark:bg-zinc-900 border border-slate-200/60 dark:border-zinc-800/80 rounded-3xl p-6 shadow-sm">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+            <div class="flex items-center gap-3">
+              <div class="w-1.5 h-6 bg-amber-500 rounded-full"></div>
+              <h2 class="text-base font-bold text-slate-900 dark:text-zinc-50 tracking-tight">A/R Aging</h2>
+            </div>
+            
+            <!-- Outstanding sum badge -->
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">Total Outstanding</span>
+              <span class="text-sm font-extrabold text-rose-500 font-mono">12.5K CAD</span>
+            </div>
+          </div>
+
+          <!-- Table Header -->
+          <div class="flex justify-between border-b border-slate-100 dark:border-zinc-800 pb-2 mb-3 text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
+            <span>Age (Days)</span>
+            <span class="text-right">Total (CAD)</span>
+          </div>
+
+          <!-- Progress Bar Rows -->
+          <div class="space-y-4">
+            @for (item of arAgingItems; track item.range) {
+              <div class="flex items-center justify-between gap-4">
+                <span class="text-xs font-semibold text-slate-600 dark:text-zinc-400 w-16 shrink-0">{{ item.range }}</span>
+                <div class="flex-1 h-3 bg-slate-100 dark:bg-zinc-800/80 rounded-full overflow-hidden">
+                  <div class="h-full rounded-full transition-all duration-500" [ngClass]="item.barColor" [style.width.%]="item.percentage"></div>
+                </div>
+                <div class="text-right shrink-0">
+                  <span class="block text-xs font-extrabold font-mono text-slate-900 dark:text-zinc-100">{{ item.amount }}</span>
+                  <span class="block text-[9px] font-medium text-slate-400 dark:text-zinc-500">{{ item.invoicesText }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- WIDGET 6: Outstanding Invoices (Donut & Status Split) -->
+        <section class="card-tactile bg-white dark:bg-zinc-900 border border-slate-200/60 dark:border-zinc-800/80 rounded-3xl p-6 shadow-sm">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-1.5 h-6 bg-amber-500 rounded-full"></div>
+            <h2 class="text-base font-bold text-slate-900 dark:text-zinc-50 tracking-tight">Outstanding Invoices</h2>
+          </div>
+
+          <!-- Donut Split layout -->
+          <div class="flex flex-col sm:flex-row items-center justify-around gap-6 py-4">
+            <!-- Left: Conic gradient CSS donut -->
+            <div class="relative w-40 h-40 rounded-full flex items-center justify-center shadow-md shadow-slate-100 dark:shadow-none border-4 border-slate-50 dark:border-zinc-850"
+                 style="background: conic-gradient(#EF4444 0% 23%, #10B981 23% 100%)">
+              <!-- Inner cutout center mask -->
+              <div class="absolute inset-4 bg-white dark:bg-zinc-900 rounded-full flex flex-col items-center justify-center z-15">
+                <span class="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">Total</span>
+                <span class="text-xl font-extrabold text-slate-900 dark:text-zinc-100 font-mono tracking-tight">12.5K</span>
+              </div>
+            </div>
+
+            <!-- Right: Status Detail Cards -->
+            <div class="flex-1 w-full max-w-xs space-y-3">
+              <!-- Overdue Card -->
+              <div class="flex items-center gap-3 p-3 bg-rose-50/30 dark:bg-rose-950/10 border border-rose-100/50 dark:border-rose-900/10 rounded-2xl">
+                <div class="w-1.5 h-12 bg-rose-500 rounded-full"></div>
+                <div>
+                  <span class="block text-[10px] font-bold text-rose-500 uppercase tracking-wider">Overdue</span>
+                  <span class="block text-base font-extrabold text-slate-900 dark:text-zinc-100 font-mono">2.9K CAD</span>
+                </div>
+              </div>
+
+              <!-- Upcoming Card -->
+              <div class="flex items-center gap-3 p-3 bg-emerald-50/30 dark:bg-emerald-950/10 border border-emerald-100/50 dark:border-emerald-900/10 rounded-2xl">
+                <div class="w-1.5 h-12 bg-emerald-500 rounded-full"></div>
+                <div>
+                  <span class="block text-[10px] font-bold text-emerald-500 uppercase tracking-wider">Upcoming</span>
+                  <span class="block text-base font-extrabold text-slate-900 dark:text-zinc-100 font-mono">9.6K CAD</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- WIDGET 7: Projected Cash Receipts -->
+        <section class="card-tactile bg-white dark:bg-zinc-900 border border-slate-200/60 dark:border-zinc-800/80 rounded-3xl p-6 shadow-sm">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-1.5 h-6 bg-amber-500 rounded-full"></div>
+            <h2 class="text-base font-bold text-slate-900 dark:text-zinc-50 tracking-tight">Projected Cash Receipts</h2>
+          </div>
+
+          <!-- Split Circular Gauge & selectable cards list -->
+          <div class="flex flex-col md:flex-row gap-6 items-center">
+            <!-- Left Gauge visual -->
+            <div class="w-36 h-36 rounded-full flex items-center justify-center relative bg-indigo-50/50 dark:bg-indigo-950/20 border-4 border-slate-50 dark:border-zinc-850"
+                 [style.background]="'conic-gradient(#8B5CF6 0% ' + (activeProjectedTarget.tasksDone / activeProjectedTarget.totalTasks * 100) + '%, transparent ' + (activeProjectedTarget.tasksDone / activeProjectedTarget.totalTasks * 100) + '%, transparent 100%)'">
+              <div class="absolute inset-3 bg-white dark:bg-zinc-900 rounded-full flex flex-col items-center justify-center text-center">
+                <span class="text-[9px] font-bold text-slate-400 dark:text-zinc-500 uppercase">Target SLA</span>
+                <span class="text-lg font-extrabold text-slate-950 dark:text-zinc-100 font-mono">{{ activeProjectedTarget.tasksDone / activeProjectedTarget.totalTasks * 100 }}%</span>
+                <span class="text-[8px] text-indigo-500 dark:text-indigo-400 font-semibold font-mono">{{ activeProjectedTarget.tasksDone }} / {{ activeProjectedTarget.totalTasks }} Tasks</span>
+              </div>
+            </div>
+
+            <!-- Right: Interactive Stacked Cards List -->
+            <div class="flex-1 w-full space-y-2.5">
+              @for (target of projectedReceipts; track target.id) {
+                <div (click)="selectReceiptTarget(target.id)" 
+                     class="group p-3 border rounded-2xl cursor-pointer transition-all flex items-center justify-between"
+                     [ngClass]="target.isActive ? 'border-blue-500 bg-blue-50/30 dark:bg-blue-950/20' : 'border-slate-100 dark:border-zinc-800 hover:border-blue-200/60 dark:hover:border-zinc-700/60 bg-white dark:bg-zinc-900'">
+                  <div>
+                    <h4 class="text-xs font-bold transition-colors" [ngClass]="target.isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-800 dark:text-zinc-150'">
+                      {{ target.title }}
+                    </h4>
+                    <p class="text-[9px] text-slate-400 dark:text-zinc-500 font-medium font-mono mt-0.5">{{ target.dateRange }}</p>
+                  </div>
+                  <div class="text-right">
+                    <span class="block text-xs font-extrabold font-mono text-slate-900 dark:text-zinc-100">{{ target.amount }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </section>
+
+        <!-- WIDGET 8: Top Debtors -->
+        <section class="card-tactile bg-white dark:bg-zinc-900 border border-slate-200/60 dark:border-zinc-800/80 rounded-3xl p-6 shadow-sm">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-1.5 h-6 bg-amber-500 rounded-full"></div>
+            <h2 class="text-base font-bold text-slate-900 dark:text-zinc-50 tracking-tight">Top Debtors</h2>
+          </div>
+
+          <!-- List Header -->
+          <div class="flex justify-between border-b border-slate-100 dark:border-zinc-800 pb-2 mb-3 text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
+            <div class="flex gap-10">
+              <span class="w-16">Age (Days)</span>
+              <span>Customer Name</span>
+            </div>
+            <span class="text-right">Total CAD</span>
+          </div>
+
+          <!-- Debtors Rows -->
+          <div class="space-y-4">
+            @for (debtor of topDebtors; track debtor.name) {
+              <div class="flex items-center justify-between gap-4">
+                <div class="flex items-center gap-10 flex-1">
+                  <!-- Age in days -->
+                  <span class="text-xs font-bold text-slate-500 dark:text-zinc-450 font-mono w-16 text-center bg-slate-50 dark:bg-zinc-800/50 py-0.5 rounded-lg border border-slate-100 dark:border-zinc-800">
+                    {{ debtor.age }}
+                  </span>
+                  
+                  <!-- Name & Contribution Progress bar -->
+                  <div class="flex-1 flex items-center gap-3 min-w-0">
+                    <span class="text-xs font-semibold text-blue-600 dark:text-blue-400 truncate w-24 shrink-0">{{ debtor.name }}</span>
+                    <div class="flex-1 h-3 bg-slate-100 dark:bg-zinc-800/80 rounded-full overflow-hidden">
+                      <div class="h-full rounded-full transition-all duration-500" [ngClass]="debtor.barColor" [style.width.%]="debtor.percentage"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Total Amount and invoices count -->
+                <div class="text-right shrink-0">
+                  <span class="block text-xs font-extrabold font-mono text-slate-900 dark:text-zinc-100">{{ debtor.amount }}</span>
+                  <span class="block text-[9px] font-medium text-slate-400 dark:text-zinc-500">({{ debtor.invoicesCount }} Invoices)</span>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+  </div>
+</div>

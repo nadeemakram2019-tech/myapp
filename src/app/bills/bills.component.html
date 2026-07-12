@@ -1,0 +1,476 @@
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-orange-50/30">
+  <!-- Header -->
+  <div class="relative overflow-hidden bg-white/80 backdrop-blur-xl border-b border-slate-200/60">
+    <div class="absolute inset-0 bg-gradient-to-r from-orange-600/5 via-amber-600/5 to-yellow-600/5"></div>
+    <div class="relative px-6 lg:px-10 py-8">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-lg shadow-orange-500/25">
+            <lucide-icon name="file-text" class="w-7 h-7 text-white"></lucide-icon>
+          </div>
+          <div>
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">Bills</h1>
+            <p class="text-sm text-slate-500 mt-1 font-medium">Track and manage all vendor bills and invoices</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-slate-100 hover:bg-slate-200 border border-slate-200/60 text-slate-700 text-sm font-semibold rounded-xl transition-all duration-200 hover:shadow-md">
+            <lucide-icon name="download" class="w-4 h-4"></lucide-icon>
+            Export
+          </button>
+          <button (click)="openNewBillModal()" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-orange-500/25 hover:shadow-xl hover:-translate-y-0.5">
+            <lucide-icon name="plus" class="w-4 h-4"></lucide-icon>
+            New Bill
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="flex items-center gap-1 mt-8 p-1 bg-slate-100/50 rounded-xl w-fit">
+        @for (tab of tabs; track tab) {
+          <button
+            (click)="onTabChange(tab)"
+            [class]="activeTab === tab
+              ? 'px-5 py-2.5 bg-white text-orange-600 font-semibold rounded-lg shadow-sm transition-all duration-200'
+              : 'px-5 py-2.5 text-slate-500 hover:text-slate-700 font-medium transition-all duration-200'">
+            {{ tab }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (loading) {
+    <div class="flex-1 overflow-y-auto p-6 lg:px-10 py-8">
+      <div class="max-w-6xl mx-auto space-y-6">
+
+        <!-- Search skeleton -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+          <div class="flex-1 max-w-md h-12 bg-slate-100 dark:bg-zinc-800 rounded-xl animate-pulse"></div>
+          <div class="w-28 h-12 bg-slate-100 dark:bg-zinc-800 rounded-xl animate-pulse"></div>
+        </div>
+
+        <!-- Stats skeleton -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          @for (s of [1,2,3]; track s) {
+            <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 border border-slate-200/60 shadow-sm">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-zinc-800 animate-pulse shrink-0"></div>
+                <div class="flex-1 space-y-2">
+                  <div class="h-7 w-24 bg-slate-100 dark:bg-zinc-800 rounded animate-pulse"></div>
+                  <div class="h-3 w-20 bg-slate-100 dark:bg-zinc-800 rounded animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Bills list skeleton -->
+        <div class="space-y-3">
+          @for (s of [1,2,3,4]; track s) {
+            <div class="bg-white/90 backdrop-blur-sm border border-slate-200/60 rounded-2xl p-5">
+              <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-zinc-800 animate-pulse shrink-0"></div>
+                <div class="flex-1 space-y-2.5">
+                  <div class="h-5 w-48 bg-slate-100 dark:bg-zinc-800 rounded animate-pulse"></div>
+                  <div class="h-3 w-32 bg-slate-100 dark:bg-zinc-800 rounded animate-pulse"></div>
+                </div>
+                <div class="w-24 h-8 bg-slate-100 dark:bg-zinc-800 rounded-lg animate-pulse hidden sm:block"></div>
+                <div class="w-32 h-8 bg-slate-100 dark:bg-zinc-800 rounded-lg animate-pulse hidden sm:block"></div>
+              </div>
+            </div>
+          }
+        </div>
+
+      </div>
+    </div>
+  }
+
+  <!-- Error State -->
+  @else if (error) {
+    <div class="flex-1 overflow-y-auto p-6 lg:px-10 py-8">
+      <div class="max-w-6xl mx-auto">
+        <div class="flex flex-col items-center justify-center py-20 text-center">
+          <div class="w-16 h-16 rounded-2xl bg-rose-100 flex items-center justify-center mb-5">
+            <lucide-icon name="alert-circle" class="w-8 h-8 text-rose-500"></lucide-icon>
+          </div>
+          <h2 class="text-xl font-bold text-slate-900 dark:text-zinc-100 mb-2">Failed to load bills</h2>
+          <p class="text-sm text-slate-500 dark:text-zinc-400 max-w-md mb-6">{{ error }}</p>
+          <button
+            (click)="retry()"
+            class="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-orange-500/25"
+          >
+            <lucide-icon name="refresh-cw" class="w-4 h-4"></lucide-icon>
+            Try Again
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Content -->
+  @else {
+    <div class="flex-1 overflow-y-auto p-6 lg:px-10 py-8">
+      <div class="max-w-6xl mx-auto space-y-6">
+
+        <!-- Search & Filters -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+          <div class="relative flex-1 max-w-md">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <div class="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                <lucide-icon name="search" class="w-4 h-4 text-orange-600"></lucide-icon>
+              </div>
+            </div>
+            <input type="text" placeholder="Search by vendor or bill ID..." class="w-full pl-14 pr-4 py-3 bg-white border border-slate-200/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-medium text-slate-900 placeholder:text-slate-400 shadow-sm">
+          </div>
+          <button class="inline-flex items-center justify-center gap-2 px-5 py-3 bg-white border border-slate-200/60 hover:bg-slate-50 text-slate-700 text-sm font-semibold rounded-xl transition-all duration-200 shadow-sm hover:shadow-md">
+            <lucide-icon name="sliders-horizontal" class="w-4 h-4"></lucide-icon>
+            Filters
+          </button>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 border border-slate-200/60 shadow-sm">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+                <lucide-icon name="clock" class="w-5 h-5 text-amber-600"></lucide-icon>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-slate-900">{{ totalPendingAmount | currency:'USD':'symbol':'1.0-0' }}</p>
+                <p class="text-xs text-slate-500 font-medium">Pending Approval</p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 border border-slate-200/60 shadow-sm">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
+                <lucide-icon name="circle-check" class="w-5 h-5 text-emerald-600"></lucide-icon>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-slate-900">{{ totalPaidAmount | currency:'USD':'symbol':'1.0-0' }}</p>
+                <p class="text-xs text-slate-500 font-medium">Paid</p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 border border-slate-200/60 shadow-sm">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-rose-100 flex items-center justify-center">
+                <lucide-icon name="alert-triangle" class="w-5 h-5 text-rose-600"></lucide-icon>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-slate-900">{{ totalOverdueAmount | currency:'USD':'symbol':'1.0-0' }}</p>
+                <p class="text-xs text-slate-500 font-medium">Overdue</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bills List -->
+        <div class="space-y-3">
+          @for (bill of paginatedBills; track bill.id) {
+            <div class="group bg-white/90 backdrop-blur-sm border border-slate-200/60 hover:border-orange-300/60 hover:shadow-lg hover:shadow-orange-500/10 cursor-pointer transition-all duration-300 rounded-2xl overflow-hidden">
+              <div class="flex flex-col lg:flex-row lg:items-center p-5 gap-5">
+                <!-- Left: Vendor Info -->
+                <div class="flex items-center gap-4 flex-1 min-w-0">
+                  <div class="relative">
+                    <span class="flex shrink-0 overflow-hidden rounded-2xl h-14 w-14 border-2 border-slate-100 shadow-sm"
+                          [ngClass]="{
+                            'bg-gradient-to-br from-purple-100 to-purple-200': bill.vendorColor === 'purple',
+                            'bg-gradient-to-br from-blue-100 to-blue-200': bill.vendorColor === 'blue',
+                            'bg-gradient-to-br from-emerald-100 to-emerald-200': bill.vendorColor === 'emerald',
+                            'bg-gradient-to-br from-orange-100 to-orange-200': bill.vendorColor === 'orange',
+                            'bg-gradient-to-br from-rose-100 to-rose-200': bill.vendorColor === 'rose',
+                            'bg-gradient-to-br from-slate-100 to-slate-200': !bill.vendorColor
+                          }">
+                      <div class="flex h-full w-full items-center justify-center font-bold text-lg"
+                           [ngClass]="{
+                             'text-purple-600': bill.vendorColor === 'purple',
+                             'text-blue-600': bill.vendorColor === 'blue',
+                             'text-emerald-600': bill.vendorColor === 'emerald',
+                             'text-orange-600': bill.vendorColor === 'orange',
+                             'text-rose-600': bill.vendorColor === 'rose',
+                             'text-slate-600': !bill.vendorColor
+                           }">
+                        {{ bill.vendorInitials }}
+                      </div>
+                    </span>
+                    @if (bill.status === 'Pending Approval') {
+                      <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-amber-400 border-2 border-white rounded-full"></span>
+                    } @else if (bill.status === 'Paid') {
+                      <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full flex items-center justify-center">
+                        <lucide-icon name="check" class="w-2.5 h-2.5 text-white"></lucide-icon>
+                      </span>
+                    } @else if (bill.status === 'Overdue') {
+                      <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-rose-500 border-2 border-white rounded-full flex items-center justify-center">
+                        <lucide-icon name="x" class="w-2.5 h-2.5 text-white"></lucide-icon>
+                      </span>
+                    } @else if (bill.status === 'Approved') {
+                      <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 border-2 border-white rounded-full flex items-center justify-center">
+                        <lucide-icon name="check" class="w-2.5 h-2.5 text-white"></lucide-icon>
+                      </span>
+                    }
+                  </div>
+                  <div class="min-w-0 flex flex-col">
+                    <h3 class="text-lg font-bold text-slate-900 truncate group-hover:text-orange-600 transition-colors">{{ bill.vendorName }}</h3>
+                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+                      <span class="text-xs font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">{{ bill.id }}</span>
+                      <span class="text-xs text-slate-500 font-medium">Due {{ bill.dueDate }}</span>
+                      @if (bill.category) {
+                        <span class="text-xs text-slate-400">•</span>
+                        <span class="text-xs text-slate-600 font-medium">{{ bill.category }}</span>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Middle: Status -->
+                <div class="flex items-center gap-3 flex-wrap">
+                  <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-semibold text-xs"
+                       [ngClass]="getStatusBadgeClass(bill.status)">
+                    @if (bill.status === 'Pending Approval') {
+                      <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                      </span>
+                    } @else {
+                      <lucide-icon [name]="getStatusIcon(bill.status)" class="w-3.5 h-3.5"></lucide-icon>
+                    }
+                    <span class="uppercase tracking-wide">{{ bill.status }}</span>
+                  </div>
+                </div>
+
+                <!-- Right: Amount & Actions -->
+                <div class="flex items-center justify-between lg:justify-end gap-4 lg:gap-6 border-t border-slate-100 lg:border-t-0 pt-4 lg:pt-0">
+                  <div class="text-right">
+                    <p class="text-xl font-bold text-slate-900">
+                      <span class="text-sm font-semibold text-slate-500">{{ bill.currency }}</span>{{ bill.amount | number:'1.2-2' }}
+                    </p>
+                    <p class="text-xs text-slate-500 font-medium mt-1">Issued {{ bill.date }}</p>
+                  </div>
+
+                  <div class="relative group/menu">
+                    <button class="inline-flex items-center justify-center w-10 h-10 text-slate-400 hover:text-orange-600 hover:bg-orange-50 rounded-xl transition-all duration-200" type="button">
+                      <lucide-icon name="ellipsis" class="w-5 h-5"></lucide-icon>
+                    </button>
+                    <div class="absolute right-0 top-full mt-2 hidden group-hover/menu:block w-44 bg-white border border-slate-100 shadow-xl shadow-slate-200/50 rounded-xl z-20 py-1.5">
+                      <button class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-orange-600 transition-colors flex items-center gap-3 rounded-t-xl">
+                         <lucide-icon name="eye" class="w-4 h-4"></lucide-icon> View Details
+                      </button>
+                      <button class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-orange-600 transition-colors flex items-center gap-3 rounded-b-xl">
+                         <lucide-icon name="download" class="w-4 h-4"></lucide-icon> Download PDF
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+          <p class="text-xs text-slate-500 font-medium">
+            Showing <span class="font-semibold text-slate-700">{{ startIndex }}-{{ endIndex }}</span>
+            of <span class="font-semibold text-slate-700">{{ filteredBills.length }}</span> bills
+          </p>
+
+          <div class="flex items-center gap-1.5">
+            <!-- Page size selector -->
+            <select
+              [ngModel]="pageSize"
+              (ngModelChange)="setPageSize($event)"
+              class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-[10px] font-bold text-slate-700 dark:text-zinc-350 focus:outline-none focus:ring-2 focus:ring-orange-500/20 mr-2"
+            >
+              @for (opt of pageSizeOptions; track opt) {
+                <option [value]="opt">{{ opt }} / page</option>
+              }
+            </select>
+
+            <!-- Prev button -->
+            <button
+              (click)="goToPage(currentPage - 1)"
+              [disabled]="currentPage <= 1"
+              class="w-8 h-8 rounded-lg border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800 flex items-center justify-center text-xs font-semibold text-slate-500 disabled:opacity-30 disabled:pointer-events-none transition-all"
+            >
+              <lucide-icon name="chevron-left" class="w-3.5 h-3.5"></lucide-icon>
+            </button>
+
+            <!-- Page numbers -->
+            @for (p of getPageNumbers(); track $index) {
+              @if (p === -1) {
+                <span class="w-8 h-8 flex items-center justify-center text-xs text-slate-400">…</span>
+              } @else {
+                <button
+                  (click)="goToPage(p)"
+                  [class]="p === currentPage
+                    ? 'w-8 h-8 rounded-lg bg-orange-500 text-white font-bold flex items-center justify-center text-xs shadow-sm'
+                    : 'w-8 h-8 rounded-lg border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800 flex items-center justify-center text-xs font-semibold text-slate-600 dark:text-zinc-400 transition-all'"
+                >
+                  {{ p }}
+                </button>
+              }
+            }
+
+            <!-- Next button -->
+            <button
+              (click)="goToPage(currentPage + 1)"
+              [disabled]="currentPage >= totalPages"
+              class="w-8 h-8 rounded-lg border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800 flex items-center justify-center text-xs font-semibold text-slate-500 disabled:opacity-30 disabled:pointer-events-none transition-all"
+            >
+              <lucide-icon name="chevron-right" class="w-3.5 h-3.5"></lucide-icon>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  }
+
+  <!-- New Bill Modal -->
+  @if (isNewBillModalOpen) {
+    <!-- Overlay Backdrop -->
+    <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 transition-opacity" aria-hidden="true" (click)="closeNewBillModal()"></div>
+
+    <!-- Modal -->
+    <div role="dialog" aria-modal="true" class="fixed left-[50%] top-[50%] z-50 w-full max-w-lg translate-x-[-50%] translate-y-[-50%] bg-white shadow-2xl rounded-2xl overflow-hidden border border-slate-200 flex flex-col max-h-[90vh]">
+      
+      <!-- Header -->
+      <div class="relative bg-gradient-to-r from-orange-50 to-amber-50 border-b border-slate-200 px-6 py-5">
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-500 to-amber-500"></div>
+        <div class="flex items-center gap-4">
+          <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-md">
+            <lucide-icon name="plus" class="w-5 h-5"></lucide-icon>
+          </div>
+          <div class="flex-1">
+            <h2 class="text-xl font-bold text-slate-900 tracking-tight">Create New Bill</h2>
+            <p class="text-sm text-slate-500 mt-0.5">Enter the bill details to create a new invoice.</p>
+          </div>
+        </div>
+        <button (click)="closeNewBillModal()" type="button" class="absolute right-4 top-1/2 -translate-y-1/2 rounded-xl p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all">
+          <lucide-icon name="x" class="h-5 w-5"></lucide-icon>
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="px-6 py-6 overflow-y-auto flex-1">
+        <div class="space-y-5">
+          
+          <!-- Vendor Name -->
+          <div>
+            <label class="text-sm font-semibold text-slate-700 block mb-1.5">Vendor Name <span class="text-red-500">*</span></label>
+            <input
+              type="text"
+              [(ngModel)]="newBillForm.vendorName"
+              placeholder="e.g. Acme Supplies Inc."
+              class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all placeholder:text-slate-400"
+              [class.border-red-300]="formSubmitted && !newBillForm.vendorName.trim()"
+            />
+            @if (formSubmitted && !newBillForm.vendorName.trim()) {
+              <p class="text-xs text-red-500 mt-1 font-medium">Vendor name is required</p>
+            }
+          </div>
+
+          <!-- Amount & Currency -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="text-sm font-semibold text-slate-700 block mb-1.5">Amount <span class="text-red-500">*</span></label>
+              <input
+                type="number"
+                [(ngModel)]="newBillForm.amount"
+                placeholder="0.00"
+                min="0"
+                step="0.01"
+                class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all placeholder:text-slate-400"
+                [class.border-red-300]="formSubmitted && !newBillForm.amount"
+              />
+              @if (formSubmitted && !newBillForm.amount) {
+                <p class="text-xs text-red-500 mt-1 font-medium">Amount is required</p>
+              }
+            </div>
+            <div>
+              <label class="text-sm font-semibold text-slate-700 block mb-1.5">Currency</label>
+              <select
+                [(ngModel)]="newBillForm.currency"
+                class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
+              >
+                <option value="USD">USD - US Dollar</option>
+                <option value="SGD">SGD - Singapore Dollar</option>
+                <option value="EUR">EUR - Euro</option>
+                <option value="GBP">GBP - British Pound</option>
+                <option value="CAD">CAD - Canadian Dollar</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Date Fields -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="text-sm font-semibold text-slate-700 block mb-1.5">Bill Date <span class="text-red-500">*</span></label>
+              <input
+                type="date"
+                [(ngModel)]="newBillForm.date"
+                class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
+                [class.border-red-300]="formSubmitted && !newBillForm.date"
+              />
+              @if (formSubmitted && !newBillForm.date) {
+                <p class="text-xs text-red-500 mt-1 font-medium">Bill date is required</p>
+              }
+            </div>
+            <div>
+              <label class="text-sm font-semibold text-slate-700 block mb-1.5">Due Date <span class="text-red-500">*</span></label>
+              <input
+                type="date"
+                [(ngModel)]="newBillForm.dueDate"
+                class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
+                [class.border-red-300]="formSubmitted && !newBillForm.dueDate"
+              />
+              @if (formSubmitted && !newBillForm.dueDate) {
+                <p class="text-xs text-red-500 mt-1 font-medium">Due date is required</p>
+              }
+            </div>
+          </div>
+
+          <!-- Category -->
+          <div>
+            <label class="text-sm font-semibold text-slate-700 block mb-1.5">Category</label>
+            <select
+              [(ngModel)]="newBillForm.category"
+              class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
+            >
+              <option value="">Select category...</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Infrastructure">Infrastructure</option>
+              <option value="Software">Software</option>
+              <option value="Communication">Communication</option>
+              <option value="Monitoring">Monitoring</option>
+              <option value="Consulting">Consulting</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="border-t border-slate-200 px-6 py-4 bg-slate-50 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
+        <button
+          (click)="closeNewBillModal()"
+          class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 hover:text-slate-900 transition-all w-full sm:w-auto"
+        >
+          Cancel
+        </button>
+        <button
+          (click)="createBill()"
+          class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-orange-500/20 hover:from-orange-600 hover:to-amber-700 transition-all w-full sm:w-auto"
+        >
+          <lucide-icon name="plus" class="w-4 h-4"></lucide-icon>
+          Create Bill
+        </button>
+      </div>
+
+    </div>
+  }
+
+</div>

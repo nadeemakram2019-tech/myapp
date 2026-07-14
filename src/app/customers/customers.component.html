@@ -95,6 +95,8 @@
         <lucide-icon name="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none"></lucide-icon>
         <input
           type="text"
+          id="customer-search"
+          name="customer-search"
           (input)="onSearch($event)"
           class="w-full pl-11 pr-4 py-3 bg-card border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all font-medium text-foreground placeholder:text-muted-foreground shadow-sm"
           placeholder="Search customers by name, email, or location..."

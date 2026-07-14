@@ -44,6 +44,10 @@ export const routes: Routes = [
     loadComponent: () => import('./credit-notes/credit-notes.component').then((m) => m.CreditNotesComponent)
   },
   {
+    path: 'schedule-payment',
+    loadComponent: () => import('./schedule-payment/schedule-payment.component').then((m) => m.SchedulePaymentComponent)
+  },
+  {
     path: 'documents',
     loadComponent: () => import('./document-manager/document-manager.component').then((m) => m.DocumentManagerComponent)
   },

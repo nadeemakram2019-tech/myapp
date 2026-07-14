@@ -101,7 +101,10 @@ import {
   File,
   UserCheck,
   CheckCircle,
-  Printer
+  Printer,
+  CalendarClock,
+  Repeat,
+  PlusCircle
 } from 'lucide-angular';
 
 export const provideLucideIcons = () => importProvidersFrom(LucideAngularModule.pick({
@@ -205,5 +208,8 @@ export const provideLucideIcons = () => importProvidersFrom(LucideAngularModule.
   File,
   UserCheck,
   CheckCircle,
-  Printer
+  Printer,
+  CalendarClock,
+  Repeat,
+  PlusCircle
 }));

@@ -1,0 +1,298 @@
+<div class="h-full flex flex-col bg-muted/30 text-foreground">
+  <!-- Page Header -->
+  <div class="px-6 lg:px-10 py-6 border-b border-border bg-card shrink-0">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <a routerLink="/dashboard">
+          <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 w-9 rounded-xl">
+            <lucide-icon name="arrow-left" class="w-4 h-4"></lucide-icon>
+          </button>
+        </a>
+        <div class="w-12 h-12 rounded-xl bg-cyan-100 dark:bg-cyan-900/40 flex items-center justify-center">
+          <lucide-icon name="calendar-clock" class="w-6 h-6 text-cyan-600 dark:text-cyan-400"></lucide-icon>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-foreground tracking-tight">Schedule Payment</h1>
+          <p class="text-sm text-muted-foreground">Create and manage scheduled customer payments</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Toast -->
+  @if (showSuccessMessage) {
+    <div class="fixed top-6 right-6 z-50 animate-in fade-in slide-in-from-top-2 duration-300">
+      <div class="flex items-center gap-3 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 px-5 py-3.5 rounded-xl shadow-lg">
+        <lucide-icon name="circle-check-big" class="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0"></lucide-icon>
+        <p class="text-sm font-semibold">Payment scheduled successfully!</p>
+      </div>
+    </div>
+  }
+
+  <!-- Content -->
+  <div class="flex-1 overflow-y-auto p-6 lg:px-10">
+    <div class="max-w-6xl mx-auto space-y-6">
+
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-card border border-border rounded-xl p-5 shadow-sm">
+          <div class="flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
+              <lucide-icon name="calendar-clock" class="w-5 h-5 text-blue-600 dark:text-blue-400"></lucide-icon>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Scheduled</p>
+              <p class="text-2xl font-bold text-foreground">{{ totalScheduled }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-card border border-border rounded-xl p-5 shadow-sm">
+          <div class="flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-cyan-50 dark:bg-cyan-900/30 flex items-center justify-center">
+              <lucide-icon name="dollar-sign" class="w-5 h-5 text-cyan-600 dark:text-cyan-400"></lucide-icon>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Amount</p>
+              <p class="text-2xl font-bold text-foreground">{{ formatCurrency(totalScheduledAmount, 'USD') }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-card border border-border rounded-xl p-5 shadow-sm">
+          <div class="flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center">
+              <lucide-icon name="calendar" class="w-5 h-5 text-emerald-600 dark:text-emerald-400"></lucide-icon>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Due This Week</p>
+              <p class="text-2xl font-bold text-foreground">{{ upcomingThisWeek }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-card border border-border rounded-xl p-5 shadow-sm">
+          <div class="flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center">
+              <lucide-icon name="repeat" class="w-5 h-5 text-purple-600 dark:text-purple-400"></lucide-icon>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Monthly Recurring</p>
+              <p class="text-2xl font-bold text-foreground">{{ monthlyRecurring }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Schedule Payment Form -->
+        <div class="lg:col-span-1">
+          <div class="bg-card border border-border rounded-2xl shadow-sm overflow-hidden sticky top-6">
+            <div class="p-5 border-b border-border bg-muted/20">
+              <h3 class="text-base font-bold text-foreground flex items-center gap-2">
+                <lucide-icon name="plus-circle" class="w-4 h-4 text-cyan-600"></lucide-icon>
+                New Scheduled Payment
+              </h3>
+            </div>
+            <form (ngSubmit)="schedulePayment()" class="p-5 space-y-4">
+              <!-- Customer Select -->
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5" for="customer-select">Customer</label>
+                <select
+                  id="customer-select"
+                  name="customer"
+                  [(ngModel)]="selectedCustomer"
+                  required
+                  class="w-full px-3.5 py-2.5 bg-card border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all text-foreground"
+                >
+                  <option value="">Select customer...</option>
+                  @for (c of customers; track c.id) {
+                    <option [value]="c.id">{{ c.name }}</option>
+                  }
+                </select>
+              </div>
+
+              <!-- Amount -->
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5" for="payment-amount">Amount</label>
+                <div class="relative">
+                  <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-medium">$</span>
+                  <input
+                    id="payment-amount"
+                    name="amount"
+                    type="number"
+                    [(ngModel)]="paymentAmount"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                    required
+                    class="w-full pl-8 pr-3.5 py-2.5 bg-card border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all text-foreground placeholder:text-muted-foreground"
+                  >
+                </div>
+              </div>
+
+              <!-- Date -->
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5" for="payment-date">Schedule Date</label>
+                <input
+                  id="payment-date"
+                  name="date"
+                  type="date"
+                  [(ngModel)]="paymentDate"
+                  required
+                  class="w-full px-3.5 py-2.5 bg-card border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all text-foreground"
+                >
+              </div>
+
+              <!-- Payment Method -->
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5" for="payment-method">Payment Method</label>
+                <select
+                  id="payment-method"
+                  name="method"
+                  [(ngModel)]="paymentMethod"
+                  required
+                  class="w-full px-3.5 py-2.5 bg-card border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all text-foreground"
+                >
+                  <option value="">Select method...</option>
+                  @for (m of paymentMethods; track m) {
+                    <option [value]="m">{{ m }}</option>
+                  }
+                </select>
+              </div>
+
+              <!-- Recurring -->
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">Recurring</label>
+                <div class="flex flex-wrap gap-1.5">
+                  @for (opt of recurringOptions; track opt) {
+                    <button
+                      type="button"
+                      (click)="recurringType = opt"
+                      [class]="recurringType === opt
+                        ? 'px-3 py-1.5 bg-cyan-600 text-white text-xs font-semibold rounded-lg transition-all'
+                        : 'px-3 py-1.5 bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-muted text-xs font-medium rounded-lg transition-all'"
+                    >
+                      {{ opt }}
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <!-- Notes -->
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5" for="payment-notes">Notes (Optional)</label>
+                <textarea
+                  id="payment-notes"
+                  name="notes"
+                  [(ngModel)]="paymentNotes"
+                  rows="2"
+                  placeholder="Add notes..."
+                  class="w-full px-3.5 py-2.5 bg-card border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all text-foreground placeholder:text-muted-foreground resize-none"
+                ></textarea>
+              </div>
+
+              <!-- Submit -->
+              <button
+                type="submit"
+                class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-semibold rounded-xl transition-all shadow-md shadow-cyan-600/20 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                [disabled]="!selectedCustomer || !paymentAmount || !paymentDate || !paymentMethod || isSubmitting"
+              >
+                @if (isSubmitting) {
+                  <lucide-icon name="refresh-cw" class="w-4 h-4 animate-spin"></lucide-icon>
+                } @else {
+                  <lucide-icon name="calendar-clock" class="w-4 h-4"></lucide-icon>
+                }
+                {{ isSubmitting ? 'Scheduling...' : 'Schedule Payment' }}
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Scheduled Payments List -->
+        <div class="lg:col-span-2 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-bold text-foreground flex items-center gap-2">
+              <lucide-icon name="list" class="w-4 h-4 text-cyan-600"></lucide-icon>
+              Scheduled Payments
+            </h3>
+            <span class="text-xs text-muted-foreground">{{ filteredScheduledPayments.length }} total</span>
+          </div>
+
+          @for (payment of filteredScheduledPayments; track payment.id) {
+            <div class="bg-card border border-border hover:border-cyan-400/50 hover:shadow-md rounded-xl transition-all duration-200"
+              [class.opacity-60]="payment.status === 'Cancelled'">
+              <div class="p-5">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-4 flex-1 min-w-0">
+                    <span class="relative flex shrink-0 overflow-hidden rounded-full w-11 h-11 shadow-sm ring-2 ring-border">
+                      <img class="aspect-square h-full w-full" [alt]="payment.customerName" [src]="payment.customerAvatar">
+                    </span>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 mb-1 flex-wrap">
+                        <h4 class="font-semibold text-sm text-foreground truncate">
+                          {{ payment.customerName }}
+                        </h4>
+                        <span class="inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-semibold {{ getStatusClass(payment.status) }}">
+                          {{ payment.status }}
+                        </span>
+                      </div>
+                      <div class="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
+                        <span class="flex items-center gap-1.5">
+                          <lucide-icon name="calendar" class="w-3 h-3 text-cyan-500 shrink-0"></lucide-icon>
+                          <span>{{ payment.scheduleDate }}</span>
+                        </span>
+                        <span class="flex items-center gap-1.5">
+                          <lucide-icon name="wallet" class="w-3 h-3 text-indigo-500 shrink-0"></lucide-icon>
+                          <span>{{ payment.paymentMethod }}</span>
+                        </span>
+                        @if (payment.recurring !== 'None') {
+                          <span class="flex items-center gap-1.5">
+                            <lucide-icon name="repeat" class="w-3 h-3 text-purple-500 shrink-0"></lucide-icon>
+                            <span>{{ payment.recurring }}</span>
+                          </span>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-3 ml-4 shrink-0">
+                    <div class="text-right">
+                      <p class="text-sm font-bold text-foreground">{{ formatCurrency(payment.amount, payment.currency) }}</p>
+                      <p class="text-[0.65rem] text-muted-foreground font-mono">{{ payment.id }}</p>
+                    </div>
+                    @if (payment.status === 'Scheduled') {
+                      <button (click)="cancelSchedule(payment.id)" class="inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 text-xs font-medium border border-border bg-card hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-muted-foreground rounded-lg transition-all">
+                        <lucide-icon name="x" class="w-3 h-3"></lucide-icon>
+                      </button>
+                    }
+                  </div>
+                </div>
+                @if (payment.notes) {
+                  <div class="mt-3 pt-3 border-t border-border">
+                    <p class="text-xs text-muted-foreground flex items-center gap-1.5">
+                      <lucide-icon name="file-text" class="w-3 h-3 shrink-0"></lucide-icon>
+                      {{ payment.notes }}
+                    </p>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+          @empty {
+            <div class="bg-card border border-border rounded-xl p-12 text-center">
+              <div class="flex flex-col items-center gap-3">
+                <div class="w-14 h-14 rounded-2xl bg-muted flex items-center justify-center">
+                  <lucide-icon name="calendar-clock" class="w-7 h-7 text-muted-foreground"></lucide-icon>
+                </div>
+                <div>
+                  <p class="text-base font-semibold text-foreground">No scheduled payments yet</p>
+                  <p class="text-sm text-muted-foreground mt-1">Use the form to schedule your first payment</p>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -98,7 +98,9 @@ import {
   FolderPlus,
   Archive,
   FileSpreadsheet,
-  File
+  File,
+  UserCheck,
+  CheckCircle
 } from 'lucide-angular';
 
 export const provideLucideIcons = () => importProvidersFrom(LucideAngularModule.pick({
@@ -199,5 +201,7 @@ export const provideLucideIcons = () => importProvidersFrom(LucideAngularModule.
   FolderPlus,
   Archive,
   FileSpreadsheet,
-  File
+  File,
+  UserCheck,
+  CheckCircle
 }));

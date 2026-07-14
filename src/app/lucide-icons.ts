@@ -91,7 +91,14 @@ import {
   ListChecks,
   Pencil,
   FileQuestion,
-  Circle
+  Circle,
+  List,
+  HardDrive,
+  Share2,
+  FolderPlus,
+  Archive,
+  FileSpreadsheet,
+  File
 } from 'lucide-angular';
 
 export const provideLucideIcons = () => importProvidersFrom(LucideAngularModule.pick({
@@ -185,5 +192,12 @@ export const provideLucideIcons = () => importProvidersFrom(LucideAngularModule.
   ListChecks,
   Pencil,
   FileQuestion,
-  Circle
+  Circle,
+  List,
+  HardDrive,
+  Share2,
+  FolderPlus,
+  Archive,
+  FileSpreadsheet,
+  File
 }));

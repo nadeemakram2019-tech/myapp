@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'planner', pathMatch: 'full' },
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   {
     path: 'dashboard',
     loadComponent: () => import('./dashboard/dashboard.component').then((m) => m.DashboardComponent)
@@ -15,24 +15,8 @@ export const routes: Routes = [
     loadComponent: () => import('./datastream/datastream.component').then((m) => m.DatastreamComponent)
   },
   {
-    path: 'planner',
-    loadComponent: () => import('./planner/planner-page.component').then((m) => m.PlannerPageComponent)
-  },
-  {
-    path: 'bills',
-    loadComponent: () => import('./bills/bills.component').then((m) => m.BillsComponent)
-  },
-  {
-    path: 'approval-delegations',
-    loadComponent: () => import('./approval-delegations/approval-delegations.component').then((m) => m.ApprovalDelegationsComponent)
-  },
-  {
     path: 'tasks',
     loadComponent: () => import('./tasks/tasks.component').then((m) => m.TasksComponent)
-  },
-  {
-    path: 'employees',
-    loadComponent: () => import('./employees/employees.component').then((m) => m.EmployeesComponent)
   },
   {
     path: 'intellicapture',
@@ -44,8 +28,8 @@ export const routes: Routes = [
     loadComponent: () => import('./payment-links/payment-links.component').then((m) => m.PaymentLinksComponent)
   },
   {
-    path: 'purchase-orders',
-    loadComponent: () => import('./purchase-orders/purchase-orders.component').then((m) => m.PurchaseOrdersComponent)
+    path: 'documents',
+    loadComponent: () => import('./document-manager/document-manager.component').then((m) => m.DocumentManagerComponent)
   },
-  { path: '**', redirectTo: 'planner' }
+  { path: '**', redirectTo: 'dashboard' }
 ];

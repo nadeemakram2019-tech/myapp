@@ -32,66 +32,6 @@ export class VendorsComponent {
   vendors: Vendor[] = [
     {
       id: '1',
-      name: '',
-      avatar: 'https://avatar.vercel.sh/.png',
-      status: 'Active',
-      type: 'Business',
-      currency: 'CAD',
-      location: 'Canada',
-      addedDate: '4/23/2026',
-      verificationStatus: 'Pending Verification'
-    },
-    {
-      id: '2',
-      name: 'ss',
-      email: 'sssss781@gmail.com',
-      phone: '033432411111',
-      location: 'Canada',
-      avatar: 'https://avatar.vercel.sh/ss.png',
-      status: 'Active',
-      type: 'Business',
-      currency: 'CAD',
-      addedDate: '4/7/2026',
-      verificationStatus: 'Account Missing'
-    },
-    {
-      id: '3',
-      name: 'Hayat Enterprises',
-      email: 'pending@example.com',
-      avatar: 'https://avatar.vercel.sh/Hayat%20Enterprises.png',
-      status: 'Active',
-      type: 'Business',
-      currency: 'CAD',
-      addedDate: '4/1/2026'
-    },
-    {
-      id: '4',
-      name: 'Marketing Pro',
-      email: 'info@marketingpro.com',
-      phone: '+1-555-0125',
-      location: 'Montreal, QC, Canada',
-      avatar: 'https://avatar.vercel.sh/Marketing%20Pro.png',
-      status: 'Active',
-      type: 'Business',
-      currency: 'CAD',
-      addedDate: '11/19/2025',
-      qboStatus: 'error'
-    },
-    {
-      id: '5',
-      name: 'IT Services Inc',
-      email: 'billing@itservices.com',
-      phone: '+1-555-0126',
-      location: 'Calgary, AB, Canada',
-      avatar: 'https://avatar.vercel.sh/IT%20Services%20Inc.png',
-      status: 'Active',
-      type: 'Business',
-      currency: 'CAD',
-      addedDate: '11/19/2025',
-      qboStatus: 'syncing'
-    },
-    {
-      id: '6',
       name: 'TechCorp Solutions',
       email: 'billing@techcorp.com',
       phone: '+1-555-0123',
@@ -104,7 +44,7 @@ export class VendorsComponent {
       qboStatus: 'synced'
     },
     {
-      id: '7',
+      id: '2',
       name: 'Office Supplies Plus',
       email: 'orders@officesupplies.com',
       phone: '+1-555-0124',
@@ -117,7 +57,33 @@ export class VendorsComponent {
       qboStatus: 'synced'
     },
     {
-      id: '8',
+      id: '3',
+      name: 'Marketing Pro',
+      email: 'info@marketingpro.com',
+      phone: '+1-555-0125',
+      location: 'Montreal, QC, Canada',
+      avatar: 'https://avatar.vercel.sh/Marketing%20Pro.png',
+      status: 'Active',
+      type: 'Business',
+      currency: 'CAD',
+      addedDate: '11/19/2025',
+      qboStatus: 'error'
+    },
+    {
+      id: '4',
+      name: 'IT Services Inc',
+      email: 'billing@itservices.com',
+      phone: '+1-555-0126',
+      location: 'Calgary, AB, Canada',
+      avatar: 'https://avatar.vercel.sh/IT%20Services%20Inc.png',
+      status: 'Active',
+      type: 'Business',
+      currency: 'CAD',
+      addedDate: '11/19/2025',
+      qboStatus: 'syncing'
+    },
+    {
+      id: '5',
       name: 'CloudTech Systems',
       email: 'accounts@cloudtech.com',
       phone: '+1 (647) 555-0456',
@@ -130,7 +96,7 @@ export class VendorsComponent {
       addedDate: '9/18/2025'
     },
     {
-      id: '9',
+      id: '6',
       name: 'ProServices Ltd',
       email: 'billing@proservices.com',
       phone: '+1 (416) 555-0345',
@@ -143,7 +109,7 @@ export class VendorsComponent {
       addedDate: '9/18/2025'
     },
     {
-      id: '10',
+      id: '7',
       name: 'Office Supply Central',
       email: 'sales@officesupplycentral.com',
       phone: '+1 (416) 555-0234',
@@ -154,15 +120,70 @@ export class VendorsComponent {
       type: 'Business',
       currency: 'CAD',
       addedDate: '9/18/2025'
+    },
+    {
+      id: '8',
+      name: 'Hayat Enterprises',
+      email: 'pending@example.com',
+      avatar: 'https://avatar.vercel.sh/Hayat%20Enterprises.png',
+      status: 'Active',
+      type: 'Business',
+      currency: 'CAD',
+      addedDate: '4/1/2026'
+    },
+    {
+      id: '9',
+      name: 'ss',
+      email: 'sssss781@gmail.com',
+      phone: '033432411111',
+      location: 'Canada',
+      avatar: 'https://avatar.vercel.sh/ss.png',
+      status: 'Active',
+      type: 'Business',
+      currency: 'CAD',
+      addedDate: '4/7/2026',
+      verificationStatus: 'Account Missing'
+    },
+    {
+      id: '10',
+      name: '',
+      avatar: 'https://avatar.vercel.sh/.png',
+      status: 'Active',
+      type: 'Business',
+      currency: 'CAD',
+      location: 'Canada',
+      addedDate: '4/23/2026',
+      verificationStatus: 'Pending Verification'
     }
   ];
 
-  stats = {
-    totalVendors: 25,
-    activeVendors: 0,
-    pendingBills: 0,
-    totalBilled: '0.0k'
-  };
+  get totalVendors(): number {
+    return this.vendors.length;
+  }
+
+  get activeVendors(): number {
+    return this.vendors.filter(v => v.status === 'Active').length;
+  }
+
+  get pendingBills(): number {
+    return this.vendors.filter(v => !!v.verificationStatus && v.verificationStatus !== 'Verified').length;
+  }
+
+  get totalBilled(): string {
+    const amount = this.vendors.length * 15.2;
+    return `${amount.toFixed(1)}k`;
+  }
+
+  get filteredVendors(): Vendor[] {
+    if (!this.searchQuery) return this.vendors;
+    const q = this.searchQuery.toLowerCase();
+    return this.vendors.filter(v =>
+      v.name.toLowerCase().includes(q) ||
+      (v.email && v.email.toLowerCase().includes(q)) ||
+      (v.phone && v.phone.includes(q)) ||
+      (v.location && v.location.toLowerCase().includes(q))
+    );
+  }
 
   onSearch(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -205,11 +226,11 @@ export class VendorsComponent {
   getQBOStatusClass(status?: string) {
     switch (status) {
       case 'synced':
-        return 'bg-green-50 text-green-700';
+        return 'bg-green-50 text-green-700 ring-green-600/20';
       case 'error':
-        return 'bg-red-50 text-red-700';
+        return 'bg-red-50 text-red-700 ring-red-600/20';
       case 'syncing':
-        return 'bg-blue-50 text-blue-700';
+        return 'bg-blue-50 text-blue-700 ring-blue-600/20';
       default:
         return '';
     }

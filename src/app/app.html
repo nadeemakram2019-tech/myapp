@@ -1,55 +1,53 @@
 <div class="app-shell min-h-screen bg-background text-foreground transition-theme" [class.sidebar-collapsed]="sidebarCollapsed()">
   <!-- Sidebar -->
-  <aside class="app-sidebar border-r border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950 px-5 py-6 flex flex-col justify-between transition-theme">
-    <div class="flex flex-col gap-8">
-      <!-- Logo: Blue circle "P" + text "Paysetra" + Expand/Collapse trigger -->
-      <div class="flex items-center justify-between gap-2 px-1">
-        <div class="flex items-center gap-3">
-          <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white font-extrabold text-lg shadow-md shadow-blue-500/20 shrink-0">
-            P
-          </div>
-          @if (!sidebarCollapsed()) {
-            <div>
-              <span class="block text-lg font-bold tracking-tight text-slate-900 dark:text-zinc-50">Paysetra</span>
-              <span class="block text-[0.6rem] font-bold uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400">Enterprise</span>
-            </div>
-          }
+  <aside class="app-sidebar border-r border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950 flex flex-col h-screen transition-theme">
+    <!-- Logo: Blue circle "A" + text "AR" + Expand/Collapse trigger -->
+    <div class="shrink-0 flex items-center justify-between gap-2 px-5 pt-6 pb-4">
+      <div class="flex items-center gap-3 px-1">
+        <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white font-extrabold text-lg shadow-md shadow-blue-500/20 shrink-0">
+          A
         </div>
-        
-        <!-- Sidebar Toggle Trigger Button -->
-        <button 
-          (click)="toggleSidebar()" 
-          class="p-1.5 hover:bg-slate-200 dark:hover:bg-zinc-900 text-slate-500 hover:text-slate-800 dark:hover:text-zinc-200 rounded-lg transition-colors cursor-pointer"
-          title="Toggle Sidebar"
-        >
-          @if (sidebarCollapsed()) {
-            <svg class="h-4 w-4 stroke-current" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-            </svg>
-          } @else {
-            <svg class="h-4 w-4 stroke-current" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M11 19l-7-7 7-7M19 19l-7-7 7-7" />
-            </svg>
-          }
-        </button>
+        @if (!sidebarCollapsed()) {
+          <div>
+            <span class="block text-lg font-bold tracking-tight text-slate-900 dark:text-zinc-50">AR</span>
+            <span class="block text-[0.6rem] font-bold uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400">Accounts Receivable</span>
+          </div>
+        }
       </div>
+      
+      <!-- Sidebar Toggle Trigger Button -->
+      <button 
+        (click)="toggleSidebar()" 
+        class="p-1.5 hover:bg-slate-200 dark:hover:bg-zinc-900 text-slate-500 hover:text-slate-800 dark:hover:text-zinc-200 rounded-lg transition-colors cursor-pointer"
+        title="Toggle Sidebar"
+      >
+        @if (sidebarCollapsed()) {
+          <svg class="h-4 w-4 stroke-current" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+          </svg>
+        } @else {
+          <svg class="h-4 w-4 stroke-current" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 19l-7-7 7-7M19 19l-7-7 7-7" />
+          </svg>
+        }
+      </button>
+    </div>
 
-      <!-- Navigation Links -->
-      <nav aria-label="Primary navigation" class="space-y-1.5">
-        <!-- Planner (Active) -->
+    <!-- Navigation Links (scrollable) -->
+    <nav aria-label="Primary navigation" class="flex-1 overflow-y-auto px-5 space-y-1.5">
+        <!-- Dashboard -->
         <a
-          routerLink="/planner"
+          routerLink="/dashboard"
           routerLinkActive="bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 font-semibold"
-          [routerLinkActiveOptions]="{exact: true}"
           class="flex items-center gap-3 rounded-xl px-4.5 py-3 text-sm font-medium transition-colors hover:bg-slate-100 dark:hover:bg-zinc-900 text-slate-700 dark:text-zinc-300"
           [class.justify-center]="sidebarCollapsed()"
           [class.px-3]="sidebarCollapsed()"
         >
           <svg class="h-4.5 w-4.5 stroke-current shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z" />
           </svg>
           @if (!sidebarCollapsed()) {
-            <span>Planner</span>
+            <span>Dashboard</span>
           }
         </a>
 
@@ -66,22 +64,6 @@
           </svg>
           @if (!sidebarCollapsed()) {
             <span>Data Stream</span>
-          }
-        </a>
-
-        <!-- Dashboard -->
-        <a
-          routerLink="/dashboard"
-          routerLinkActive="bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 font-semibold"
-          class="flex items-center gap-3 rounded-xl px-4.5 py-3 text-sm font-medium transition-colors hover:bg-slate-100 dark:hover:bg-zinc-900 text-slate-700 dark:text-zinc-300"
-          [class.justify-center]="sidebarCollapsed()"
-          [class.px-3]="sidebarCollapsed()"
-        >
-          <svg class="h-4.5 w-4.5 stroke-current shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z" />
-          </svg>
-          @if (!sidebarCollapsed()) {
-            <span>Dashboard</span>
           }
         </a>
 
@@ -117,57 +99,6 @@
           }
         </a>
 
-        <!-- Expenses (coming soon) -->
-        <div
-          class="flex items-center justify-between rounded-xl px-4.5 py-3 text-sm font-medium text-slate-400 dark:text-zinc-600 cursor-not-allowed group relative"
-          [class.justify-center]="sidebarCollapsed()"
-          [class.px-3]="sidebarCollapsed()"
-        >
-          <div class="flex items-center gap-3">
-            <svg class="h-4.5 w-4.5 stroke-current shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            @if (!sidebarCollapsed()) {
-              <span>Expenses</span>
-            }
-          </div>
-          @if (!sidebarCollapsed()) {
-            <span class="text-[0.6rem] font-semibold bg-slate-200/60 dark:bg-zinc-800 text-slate-500 dark:text-zinc-450 px-2 py-0.5 rounded-full uppercase tracking-wider">Soon</span>
-          }
-        </div>
-
-        <!-- Bills -->
-        <a
-          routerLink="/bills"
-          routerLinkActive="bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 font-semibold"
-          class="flex items-center gap-3 rounded-xl px-4.5 py-3 text-sm font-medium transition-colors hover:bg-slate-100 dark:hover:bg-zinc-900 text-slate-700 dark:text-zinc-300"
-          [class.justify-center]="sidebarCollapsed()"
-          [class.px-3]="sidebarCollapsed()"
-        >
-          <svg class="h-4.5 w-4.5 stroke-current shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          @if (!sidebarCollapsed()) {
-            <span>Bills</span>
-          }
-        </a>
-
-        <!-- Purchase Orders -->
-        <a
-          routerLink="/purchase-orders"
-          routerLinkActive="bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 font-semibold"
-          class="flex items-center gap-3 rounded-xl px-4.5 py-3 text-sm font-medium transition-colors hover:bg-slate-100 dark:hover:bg-zinc-900 text-slate-700 dark:text-zinc-300"
-          [class.justify-center]="sidebarCollapsed()"
-          [class.px-3]="sidebarCollapsed()"
-        >
-          <svg class="h-4.5 w-4.5 stroke-current shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-          </svg>
-          @if (!sidebarCollapsed()) {
-            <span>Purchase Orders</span>
-          }
-        </a>
-
         <!-- Payment Links -->
         <a
           routerLink="/payment-links"
@@ -200,58 +131,22 @@
           }
         </a>
 
-        <!-- Approval Delegations -->
+        <!-- Document Manager -->
         <a
-          routerLink="/approval-delegations"
+          routerLink="/documents"
           routerLinkActive="bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 font-semibold"
           class="flex items-center gap-3 rounded-xl px-4.5 py-3 text-sm font-medium transition-colors hover:bg-slate-100 dark:hover:bg-zinc-900 text-slate-700 dark:text-zinc-300"
           [class.justify-center]="sidebarCollapsed()"
           [class.px-3]="sidebarCollapsed()"
         >
           <svg class="h-4.5 w-4.5 stroke-current shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
           </svg>
           @if (!sidebarCollapsed()) {
-            <span>Approval Delegations</span>
+            <span>Documents</span>
           }
         </a>
-
-        <!-- Employees -->
-        <a
-          routerLink="/employees"
-          routerLinkActive="bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 font-semibold"
-          class="flex items-center gap-3 rounded-xl px-4.5 py-3 text-sm font-medium transition-colors hover:bg-slate-100 dark:hover:bg-zinc-900 text-slate-700 dark:text-zinc-300"
-          [class.justify-center]="sidebarCollapsed()"
-          [class.px-3]="sidebarCollapsed()"
-        >
-          <svg class="h-4.5 w-4.5 stroke-current shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-          @if (!sidebarCollapsed()) {
-            <span>Employees</span>
-          }
-        </a>
-
-        <!-- Vendors (coming soon) -->
-        <div
-          class="flex items-center justify-between rounded-xl px-4.5 py-3 text-sm font-medium text-slate-400 dark:text-zinc-600 cursor-not-allowed group relative"
-          [class.justify-center]="sidebarCollapsed()"
-          [class.px-3]="sidebarCollapsed()"
-        >
-          <div class="flex items-center gap-3">
-            <svg class="h-4.5 w-4.5 stroke-current shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-            @if (!sidebarCollapsed()) {
-              <span>Vendors</span>
-            }
-          </div>
-          @if (!sidebarCollapsed()) {
-            <span class="text-[0.6rem] font-semibold bg-slate-200/60 dark:bg-zinc-800 text-slate-500 dark:text-zinc-450 px-2 py-0.5 rounded-full uppercase tracking-wider">Soon</span>
-          }
-        </div>
       </nav>
-    </div>
 
     <!-- Sidebar Bottom: Theme toggle + user profile preview -->
     <div class="flex flex-col gap-4 border-t border-slate-200 dark:border-zinc-800 pt-5">
@@ -296,7 +191,7 @@
         @if (!sidebarCollapsed()) {
           <div class="min-w-0 flex-1">
             <span class="block truncate text-xs font-semibold text-slate-900 dark:text-zinc-100">John Doe</span>
-            <span class="block truncate text-[0.7rem] text-slate-500 dark:text-zinc-450">john@paysetra.com</span>
+            <span class="block truncate text-[0.7rem] text-slate-500 dark:text-zinc-450">john@ar-accounts.com</span>
           </div>
         }
       </div>

@@ -100,7 +100,8 @@ import {
   FileSpreadsheet,
   File,
   UserCheck,
-  CheckCircle
+  CheckCircle,
+  Printer
 } from 'lucide-angular';
 
 export const provideLucideIcons = () => importProvidersFrom(LucideAngularModule.pick({
@@ -203,5 +204,6 @@ export const provideLucideIcons = () => importProvidersFrom(LucideAngularModule.
   FileSpreadsheet,
   File,
   UserCheck,
-  CheckCircle
+  CheckCircle,
+  Printer
 }));

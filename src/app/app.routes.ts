@@ -32,6 +32,14 @@ export const routes: Routes = [
     loadComponent: () => import('./customers/customers.component').then((m) => m.CustomersComponent)
   },
   {
+    path: 'invoices',
+    loadComponent: () => import('./invoices/invoices.component').then((m) => m.InvoicesComponent)
+  },
+  {
+    path: 'invoices/:id',
+    loadComponent: () => import('./invoices/invoice-view.component').then((m) => m.InvoiceViewComponent)
+  },
+  {
     path: 'credit-notes',
     loadComponent: () => import('./credit-notes/credit-notes.component').then((m) => m.CreditNotesComponent)
   },

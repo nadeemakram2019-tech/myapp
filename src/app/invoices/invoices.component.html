@@ -1,0 +1,174 @@
+<div class="h-full flex flex-col bg-muted/30 text-foreground">
+  <!-- Page Header -->
+  <div class="px-6 lg:px-10 py-6 border-b border-border bg-card shrink-0">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <a routerLink="/customers">
+          <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 w-9 rounded-xl">
+            <lucide-icon name="arrow-left" class="w-4 h-4"></lucide-icon>
+          </button>
+        </a>
+        <div class="w-12 h-12 rounded-xl bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center">
+          <lucide-icon name="receipt" class="w-6 h-6 text-indigo-600 dark:text-indigo-400"></lucide-icon>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-foreground tracking-tight">Invoices</h1>
+          <p class="text-sm text-muted-foreground">Manage invoices sent to your customers</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-card border border-border hover:bg-muted text-foreground text-sm font-semibold rounded-xl transition-all shadow-sm">
+          <lucide-icon name="download" class="w-4 h-4"></lucide-icon>
+          Export
+        </button>
+        <button (click)="createInvoice()" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-all shadow-md shadow-indigo-600/20 hover:-translate-y-0.5">
+          <lucide-icon name="plus" class="w-4 h-4"></lucide-icon>
+          New Invoice
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="flex-1 overflow-y-auto p-6 lg:px-10">
+    <div class="max-w-6xl mx-auto space-y-6">
+
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-card border border-border rounded-xl p-5 shadow-sm">
+          <div class="flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center">
+              <lucide-icon name="receipt" class="w-5 h-5 text-indigo-600 dark:text-indigo-400"></lucide-icon>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Invoices</p>
+              <p class="text-2xl font-bold text-foreground">{{ totalInvoices }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-card border border-border rounded-xl p-5 shadow-sm">
+          <div class="flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center">
+              <lucide-icon name="clock" class="w-5 h-5 text-amber-600 dark:text-amber-400"></lucide-icon>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Pending</p>
+              <p class="text-2xl font-bold text-foreground">{{ totalPending }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-card border border-border rounded-xl p-5 shadow-sm">
+          <div class="flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-rose-50 dark:bg-rose-900/30 flex items-center justify-center">
+              <lucide-icon name="alert-triangle" class="w-5 h-5 text-rose-600 dark:text-rose-400"></lucide-icon>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Overdue</p>
+              <p class="text-2xl font-bold text-foreground">{{ totalOverdue }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-card border border-border rounded-xl p-5 shadow-sm">
+          <div class="flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center">
+              <lucide-icon name="dollar-sign" class="w-5 h-5 text-emerald-600 dark:text-emerald-400"></lucide-icon>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Amount Due</p>
+              <p class="text-2xl font-bold text-foreground">{{ formatCurrency(totalAmountDue, 'USD') }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="relative">
+        <lucide-icon name="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none"></lucide-icon>
+        <input
+          type="text"
+          (input)="onSearch($event)"
+          class="w-full pl-11 pr-4 py-3 bg-card border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all font-medium text-foreground placeholder:text-muted-foreground shadow-sm"
+          placeholder="Search by invoice ID, customer name, or status..."
+          [value]="searchQuery">
+      </div>
+
+      <!-- Invoices List -->
+      <div class="space-y-3">
+        @for (inv of filteredInvoices; track inv.id) {
+          <a [routerLink]="['/invoices', inv.id]" class="block group bg-card border border-border hover:border-indigo-400/50 hover:shadow-md rounded-xl transition-all duration-200 cursor-pointer">
+            <div class="p-5">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4 flex-1 min-w-0">
+                  <span class="relative flex shrink-0 overflow-hidden rounded-full w-12 h-12 shadow-sm ring-2 ring-border">
+                    <img class="aspect-square h-full w-full" [alt]="inv.customerName" [src]="inv.customerAvatar">
+                  </span>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+                      <h3 class="font-semibold text-base text-foreground group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate">
+                        {{ inv.id }}
+                      </h3>
+                      <span class="inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-semibold {{ getStatusClass(inv.status) }}">
+                        {{ inv.status }}
+                      </span>
+                    </div>
+                    <div class="flex items-center gap-4 text-xs text-muted-foreground flex-wrap">
+                      <span class="flex items-center gap-1.5">
+                        <lucide-icon name="user" class="w-3.5 h-3.5 text-blue-500 shrink-0"></lucide-icon>
+                        <span class="truncate max-w-40">{{ inv.customerName }}</span>
+                      </span>
+                      <span class="flex items-center gap-1.5">
+                        <lucide-icon name="calendar" class="w-3.5 h-3.5 text-indigo-500 shrink-0"></lucide-icon>
+                        <span>Issued: {{ inv.issuedDate }}</span>
+                      </span>
+                      <span class="flex items-center gap-1.5"
+                        [class.text-rose-500]="inv.status === 'Overdue'"
+                        [class.text-amber-500]="inv.status === 'Pending'"
+                        [class.text-emerald-500]="inv.status === 'Paid'"
+                      >
+                        <lucide-icon name="calendar" class="w-3.5 h-3.5 shrink-0"></lucide-icon>
+                        <span>Due: {{ inv.dueDate }}</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3 ml-4 shrink-0">
+                  <div class="text-right">
+                    <p class="text-sm font-semibold text-foreground">{{ formatCurrency(inv.amount, inv.currency) }}</p>
+                    <p class="text-xs text-muted-foreground">{{ inv.currency }}</p>
+                  </div>
+                  <span class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-all shadow-sm">
+                    <lucide-icon name="eye" class="w-3.5 h-3.5"></lucide-icon>
+                    View
+                  </span>
+                </div>
+              </div>
+            </div>
+          </a>
+        }
+        @empty {
+          <div class="bg-card border border-border rounded-xl p-12 text-center">
+            <div class="flex flex-col items-center gap-3">
+              <div class="w-14 h-14 rounded-2xl bg-muted flex items-center justify-center">
+                <lucide-icon name="receipt" class="w-7 h-7 text-muted-foreground"></lucide-icon>
+              </div>
+              @if (searchQuery) {
+                <div>
+                  <p class="text-base font-semibold text-foreground">No invoices match your search</p>
+                  <p class="text-sm text-muted-foreground mt-1">Try adjusting your search terms</p>
+                </div>
+              } @else {
+                <div>
+                  <p class="text-base font-semibold text-foreground">No invoices yet</p>
+                  <p class="text-sm text-muted-foreground mt-1">Create your first invoice to get started</p>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

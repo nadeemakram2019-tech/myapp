@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { RouterModule } from '@angular/router';
 import { VendorService, Vendor } from '../services/vendor.service';
+import { PageHeaderComponent } from '../components/page-header.component';
 
 @Component({
   selector: 'app-vendors',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, RouterModule],
+  imports: [CommonModule, LucideAngularModule, RouterModule, PageHeaderComponent],
   templateUrl: './vendors.component.html'
 })
 export class VendorsComponent implements OnInit {

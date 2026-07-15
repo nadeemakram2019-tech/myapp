@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { PaymentService, Payment } from '../services/payment.service';
+import { PageHeaderComponent } from '../components/page-header.component';
 
 @Component({
   selector: 'app-payments',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule, PageHeaderComponent],
   templateUrl: './payments.component.html'
 })
 export class PaymentsComponent implements OnInit {

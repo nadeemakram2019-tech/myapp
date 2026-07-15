@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { RouterModule } from '@angular/router';
 import { CreditNoteService, CreditNote } from '../services/credit-note.service';
+import { PageHeaderComponent } from '../components/page-header.component';
 
 @Component({
   selector: 'app-credit-notes',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, RouterModule],
+  imports: [CommonModule, LucideAngularModule, RouterModule, PageHeaderComponent],
   templateUrl: './credit-notes.component.html'
 })
 export class CreditNotesComponent implements OnInit {

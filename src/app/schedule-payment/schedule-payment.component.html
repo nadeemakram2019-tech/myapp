@@ -1,23 +1,6 @@
 <div class="h-full flex flex-col bg-muted/30 text-foreground">
-  <!-- Page Header -->
-  <div class="px-6 lg:px-10 py-6 border-b border-border bg-card shrink-0">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center gap-4">
-        <a routerLink="/dashboard">
-          <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 w-9 rounded-xl">
-            <lucide-icon name="arrow-left" class="w-4 h-4"></lucide-icon>
-          </button>
-        </a>
-        <div class="w-12 h-12 rounded-xl bg-cyan-100 dark:bg-cyan-900/40 flex items-center justify-center">
-          <lucide-icon name="calendar-clock" class="w-6 h-6 text-cyan-600 dark:text-cyan-400"></lucide-icon>
-        </div>
-        <div>
-          <h1 class="text-2xl font-bold text-foreground tracking-tight">Schedule Payment</h1>
-          <p class="text-sm text-muted-foreground">Create and manage scheduled customer payments</p>
-        </div>
-      </div>
-    </div>
-  </div>
+  <app-page-header backRoute="/dashboard" iconName="calendar-clock" iconBg="bg-cyan-100 dark:bg-cyan-900/40" iconColor="text-cyan-600 dark:text-cyan-400" title="Schedule Payment" subtitle="Create and manage scheduled customer payments">
+  </app-page-header>
 
   <!-- Success Toast -->
   @if (showSuccessMessage) {

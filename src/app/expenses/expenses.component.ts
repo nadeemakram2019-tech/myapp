@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { ExpenseService, Expense } from '../services/expense.service';
+import { PageHeaderComponent } from '../components/page-header.component';
 
 @Component({
   selector: 'app-expenses',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule, PageHeaderComponent],
   templateUrl: './expenses.component.html'
 })
 export class ExpensesComponent implements OnInit {

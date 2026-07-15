@@ -5,11 +5,12 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SchedulePaymentService, ScheduledPayment } from '../services/schedule-payment.service';
 import { CustomerService, Customer } from '../services/customer.service';
+import { PageHeaderComponent } from '../components/page-header.component';
 
 @Component({
   selector: 'app-schedule-payment',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, RouterModule, FormsModule],
+  imports: [CommonModule, LucideAngularModule, RouterModule, FormsModule, PageHeaderComponent],
   templateUrl: './schedule-payment.component.html'
 })
 export class SchedulePaymentComponent implements OnInit {

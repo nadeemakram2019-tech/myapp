@@ -4,11 +4,12 @@ import { LucideAngularModule } from 'lucide-angular';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CustomerService, Customer } from '../services/customer.service';
+import { PageHeaderComponent } from '../components/page-header.component';
 
 @Component({
   selector: 'app-customers',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, RouterModule, FormsModule],
+  imports: [CommonModule, LucideAngularModule, RouterModule, FormsModule, PageHeaderComponent],
   templateUrl: './customers.component.html'
 })
 export class CustomersComponent implements OnInit {

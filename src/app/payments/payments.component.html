@@ -1,42 +1,27 @@
-<div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
-  <!-- Header -->
-  <div class="relative overflow-hidden bg-white/80 backdrop-blur-xl border-b border-slate-200/60">
-    <div class="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-purple-600/5 to-cyan-600/5"></div>
-    <div class="relative px-6 lg:px-10 py-8">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div class="flex items-center gap-4">
-          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/25">
-            <lucide-icon name="credit-card" class="w-7 h-7 text-white"></lucide-icon>
-          </div>
-          <div>
-            <h1 class="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">Payments</h1>
-            <p class="text-sm text-slate-500 mt-1 font-medium">Track and manage all payment transactions</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-3">
-          <button class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-slate-100 hover:bg-slate-200 border border-slate-200/60 text-slate-700 text-sm font-semibold rounded-xl transition-all duration-200 hover:shadow-md">
-            <lucide-icon name="download" class="w-4 h-4"></lucide-icon>
-            Export
-          </button>
-          <button class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:-translate-y-0.5">
-            <lucide-icon name="plus" class="w-4 h-4"></lucide-icon>
-            New Payment
-          </button>
-        </div>
-      </div>
+<div class="min-h-screen bg-muted/30">
+  <app-page-header iconName="credit-card" iconBg="bg-gradient-to-br from-blue-500 to-indigo-600" iconColor="text-white" title="Payments" subtitle="Track and manage all payment transactions">
+    <button class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-card border border-border hover:bg-muted text-foreground text-sm font-semibold rounded-xl transition-all shadow-sm">
+      <lucide-icon name="download" class="w-4 h-4"></lucide-icon>
+      Export
+    </button>
+    <button class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-all shadow-md shadow-blue-500/25 hover:shadow-xl hover:-translate-y-0.5">
+      <lucide-icon name="plus" class="w-4 h-4"></lucide-icon>
+      New Payment
+    </button>
+  </app-page-header>
 
-      <!-- Tabs -->
-      <div class="flex items-center gap-1 mt-8 p-1 bg-slate-100/50 rounded-xl w-fit">
-        @for (tab of tabs; track tab) {
-          <button
-            (click)="activeTab = tab"
-            [class]="activeTab === tab
-              ? 'px-5 py-2.5 bg-white text-blue-600 font-semibold rounded-lg shadow-sm transition-all duration-200'
-              : 'px-5 py-2.5 text-slate-500 hover:text-slate-700 font-medium transition-all duration-200'">
-            {{ tab }}
-          </button>
-        }
-      </div>
+  <!-- Tabs -->
+  <div class="px-6 lg:px-10 py-3 border-b border-border bg-card shrink-0">
+    <div class="flex items-center gap-1 p-1 bg-muted/30 rounded-xl w-fit">
+      @for (tab of tabs; track tab) {
+        <button
+          (click)="activeTab = tab"
+          [class]="activeTab === tab
+            ? 'px-5 py-2.5 bg-card text-blue-600 font-semibold rounded-lg shadow-sm transition-all duration-200'
+            : 'px-5 py-2.5 text-muted-foreground hover:text-foreground font-medium transition-all duration-200'">
+          {{ tab }}
+        </button>
+      }
     </div>
   </div>
 
@@ -52,9 +37,9 @@
               <lucide-icon name="search" class="w-4 h-4 text-blue-600"></lucide-icon>
             </div>
           </div>
-          <input type="text" placeholder="Search by vendor or payment ID..." class="w-full pl-14 pr-4 py-3 bg-white border border-slate-200/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium text-slate-900 placeholder:text-slate-400 shadow-sm">
+          <input type="text" placeholder="Search by vendor or payment ID..." class="w-full pl-14 pr-4 py-3 bg-card border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium text-foreground placeholder:text-muted-foreground shadow-sm">
         </div>
-        <button class="inline-flex items-center justify-center gap-2 px-5 py-3 bg-white border border-slate-200/60 hover:bg-slate-50 text-slate-700 text-sm font-semibold rounded-xl transition-all duration-200 shadow-sm hover:shadow-md">
+        <button class="inline-flex items-center justify-center gap-2 px-5 py-3 bg-card border border-border hover:bg-muted text-foreground text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md">
           <lucide-icon name="sliders-horizontal" class="w-4 h-4"></lucide-icon>
           Filters
         </button>
@@ -62,36 +47,36 @@
 
       <!-- Stats Row -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 border border-slate-200/60 shadow-sm">
+        <div class="bg-card border border-border rounded-2xl p-5 shadow-sm">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
               <lucide-icon name="circle-check" class="w-5 h-5 text-emerald-600"></lucide-icon>
             </div>
             <div>
-              <p class="text-2xl font-bold text-slate-900">$34,590</p>
-              <p class="text-xs text-slate-500 font-medium">Completed</p>
+              <p class="text-2xl font-bold text-foreground">$34,590</p>
+              <p class="text-xs text-muted-foreground font-medium">Completed</p>
             </div>
           </div>
         </div>
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 border border-slate-200/60 shadow-sm">
+        <div class="bg-card border border-border rounded-2xl p-5 shadow-sm">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
               <lucide-icon name="clock" class="w-5 h-5 text-amber-600"></lucide-icon>
             </div>
             <div>
-              <p class="text-2xl font-bold text-slate-900">$7,800</p>
-              <p class="text-xs text-slate-500 font-medium">Pending</p>
+              <p class="text-2xl font-bold text-foreground">$7,800</p>
+              <p class="text-xs text-muted-foreground font-medium">Pending</p>
             </div>
           </div>
         </div>
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 border border-slate-200/60 shadow-sm">
+        <div class="bg-card border border-border rounded-2xl p-5 shadow-sm">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-rose-100 flex items-center justify-center">
               <lucide-icon name="alert-triangle" class="w-5 h-5 text-rose-600"></lucide-icon>
             </div>
             <div>
-              <p class="text-2xl font-bold text-slate-900">$3,200</p>
-              <p class="text-xs text-slate-500 font-medium">Failed</p>
+              <p class="text-2xl font-bold text-foreground">$3,200</p>
+              <p class="text-xs text-muted-foreground font-medium">Failed</p>
             </div>
           </div>
         </div>
@@ -100,12 +85,12 @@
       <!-- Payments List -->
       <div class="space-y-3">
         @for (payment of filteredPayments; track payment.id) {
-          <div class="group bg-white/90 backdrop-blur-sm border border-slate-200/60 hover:border-blue-300/60 hover:shadow-lg hover:shadow-blue-500/10 cursor-pointer transition-all duration-300 rounded-2xl overflow-hidden">
+          <div class="group bg-card border border-border hover:border-blue-300/60 hover:shadow-lg cursor-pointer transition-all duration-300 rounded-2xl overflow-hidden">
             <div class="flex flex-col lg:flex-row lg:items-center p-5 gap-5">
               <!-- Left: Vendor Info -->
               <div class="flex items-center gap-4 flex-1 min-w-0">
                 <div class="relative">
-                  <span class="flex shrink-0 overflow-hidden rounded-2xl h-14 w-14 border-2 border-slate-100 shadow-sm"
+                  <span class="flex shrink-0 overflow-hidden rounded-2xl h-14 w-14 border-2 border-border shadow-sm"
                         [ngClass]="{
                           'bg-gradient-to-br from-purple-100 to-purple-200': payment.vendorColor === 'purple',
                           'bg-gradient-to-br from-blue-100 to-blue-200': payment.vendorColor === 'blue',
@@ -124,7 +109,7 @@
                              'text-emerald-600': payment.vendorColor === 'emerald',
                              'text-orange-600': payment.vendorColor === 'orange',
                              'text-rose-600': payment.vendorColor === 'rose',
-                             'text-slate-600': !payment.vendorColor
+                             'text-foreground': !payment.vendorColor
                            }">
                         {{ payment.vendorInitials }}
                       </div>
@@ -143,13 +128,13 @@
                   }
                 </div>
                 <div class="min-w-0 flex flex-col">
-                  <h3 class="text-lg font-bold text-slate-900 truncate group-hover:text-blue-600 transition-colors">{{ payment.vendorName }}</h3>
+                  <h3 class="text-lg font-bold text-foreground truncate group-hover:text-blue-600 transition-colors">{{ payment.vendorName }}</h3>
                   <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
-                    <span class="text-xs font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">{{ payment.id }}</span>
-                    <span class="text-xs text-slate-500 font-medium">{{ payment.date }}</span>
+                    <span class="text-xs font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded-md border border-border">{{ payment.id }}</span>
+                    <span class="text-xs text-muted-foreground font-medium">{{ payment.date }}</span>
                     @if (payment.billId) {
-                      <span class="text-xs text-slate-400">•</span>
-                      <span class="text-xs text-slate-600 font-medium">Bill: {{ payment.billId }}</span>
+                      <span class="text-xs text-muted-foreground">•</span>
+                      <span class="text-xs text-muted-foreground font-medium">Bill: {{ payment.billId }}</span>
                     }
                   </div>
                 </div>
@@ -157,9 +142,9 @@
 
               <!-- Middle: Method & Status -->
               <div class="flex items-center gap-3 flex-wrap">
-                <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200/60">
-                  <lucide-icon [name]="getMethodIcon(payment.method)" class="w-4 h-4 text-slate-400"></lucide-icon>
-                  <span class="text-xs text-slate-600 font-semibold">{{ payment.method }}</span>
+                <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted border border-border">
+                  <lucide-icon [name]="getMethodIcon(payment.method)" class="w-4 h-4 text-muted-foreground"></lucide-icon>
+                  <span class="text-xs text-muted-foreground font-semibold">{{ payment.method }}</span>
                 </div>
 
                 <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-semibold text-xs"
@@ -181,23 +166,23 @@
               </div>
 
               <!-- Right: Amount & Actions -->
-              <div class="flex items-center justify-between lg:justify-end gap-4 lg:gap-6 border-t border-slate-100 lg:border-t-0 pt-4 lg:pt-0">
+              <div class="flex items-center justify-between lg:justify-end gap-4 lg:gap-6 border-t border-border lg:border-t-0 pt-4 lg:pt-0">
                 <div class="text-right">
-                  <p class="text-xl font-bold text-slate-900">
-                    <span class="text-sm font-semibold text-slate-500">{{ payment.currency }}</span>{{ payment.amount | number:'1.2-2' }}
+                  <p class="text-xl font-bold text-foreground">
+                    <span class="text-sm font-semibold text-muted-foreground">{{ payment.currency }}</span>{{ payment.amount | number:'1.2-2' }}
                   </p>
-                  <p class="text-xs text-slate-500 font-medium mt-1">Ref: {{ payment.reference }}</p>
+                  <p class="text-xs text-muted-foreground font-medium mt-1">Ref: {{ payment.reference }}</p>
                 </div>
 
                 <div class="relative group/menu">
-                  <button class="inline-flex items-center justify-center w-10 h-10 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200" type="button">
+                  <button class="inline-flex items-center justify-center w-10 h-10 text-muted-foreground hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200" type="button">
                     <lucide-icon name="ellipsis" class="w-5 h-5"></lucide-icon>
                   </button>
-                  <div class="absolute right-0 top-full mt-2 hidden group-hover/menu:block w-44 bg-white border border-slate-100 shadow-xl shadow-slate-200/50 rounded-xl z-20 py-1.5">
-                    <button class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors flex items-center gap-3 rounded-t-xl">
+                  <div class="absolute right-0 top-full mt-2 hidden group-hover/menu:block w-44 bg-card border border-border shadow-xl rounded-xl z-20 py-1.5">
+                    <button class="w-full text-left px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted hover:text-blue-600 transition-colors flex items-center gap-3 rounded-t-xl">
                        <lucide-icon name="eye" class="w-4 h-4"></lucide-icon> View Details
                     </button>
-                    <button class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors flex items-center gap-3 rounded-b-xl">
+                    <button class="w-full text-left px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted hover:text-blue-600 transition-colors flex items-center gap-3 rounded-b-xl">
                        <lucide-icon name="download" class="w-4 h-4"></lucide-icon> Download Receipt
                     </button>
                   </div>

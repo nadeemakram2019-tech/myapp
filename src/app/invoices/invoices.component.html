@@ -1,33 +1,14 @@
 <div class="h-full flex flex-col bg-muted/30 text-foreground">
-  <!-- Page Header -->
-  <div class="px-6 lg:px-10 py-6 border-b border-border bg-card shrink-0">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center gap-4">
-        <a routerLink="/customers">
-          <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 w-9 rounded-xl">
-            <lucide-icon name="arrow-left" class="w-4 h-4"></lucide-icon>
-          </button>
-        </a>
-        <div class="w-12 h-12 rounded-xl bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center">
-          <lucide-icon name="receipt" class="w-6 h-6 text-indigo-600 dark:text-indigo-400"></lucide-icon>
-        </div>
-        <div>
-          <h1 class="text-2xl font-bold text-foreground tracking-tight">Invoices</h1>
-          <p class="text-sm text-muted-foreground">Manage invoices sent to your customers</p>
-        </div>
-      </div>
-      <div class="flex items-center gap-3">
-        <button class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-card border border-border hover:bg-muted text-foreground text-sm font-semibold rounded-xl transition-all shadow-sm">
-          <lucide-icon name="download" class="w-4 h-4"></lucide-icon>
-          Export
-        </button>
-        <button (click)="createInvoice()" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-all shadow-md shadow-indigo-600/20 hover:-translate-y-0.5">
-          <lucide-icon name="plus" class="w-4 h-4"></lucide-icon>
-          New Invoice
-        </button>
-      </div>
-    </div>
-  </div>
+  <app-page-header backRoute="/customers" iconName="receipt" iconBg="bg-indigo-100 dark:bg-indigo-900/40" iconColor="text-indigo-600 dark:text-indigo-400" title="Invoices" subtitle="Manage invoices sent to your customers">
+    <button class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-card border border-border hover:bg-muted text-foreground text-sm font-semibold rounded-xl transition-all shadow-sm">
+      <lucide-icon name="download" class="w-4 h-4"></lucide-icon>
+      Export
+    </button>
+    <button (click)="createInvoice()" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-all shadow-md shadow-indigo-600/20 hover:-translate-y-0.5">
+      <lucide-icon name="plus" class="w-4 h-4"></lucide-icon>
+      New Invoice
+    </button>
+  </app-page-header>
 
   <!-- Content -->
   <div class="flex-1 overflow-y-auto p-6 lg:px-10">

@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { RouterModule } from '@angular/router';
 import { InvoiceService, Invoice } from '../services/invoice.service';
+import { PageHeaderComponent } from '../components/page-header.component';
 
 @Component({
   selector: 'app-invoices',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, RouterModule],
+  imports: [CommonModule, LucideAngularModule, RouterModule, PageHeaderComponent],
   templateUrl: './invoices.component.html'
 })
 export class InvoicesComponent implements OnInit {

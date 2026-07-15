@@ -19,28 +19,20 @@ export class PurchaseOrdersComponent implements OnInit {
   itemsPerPage = 10;
   showRows = 10;
 
-  purchaseOrders: PurchaseOrder[] = [];
-  loading = true;
-  error = '';
-
   ngOnInit(): void {
-    this.loadPurchaseOrders();
+    this.purchaseOrdersService.loadAll();
   }
 
-  private loadPurchaseOrders(): void {
-    this.loading = true;
-    this.error = '';
-    this.purchaseOrdersService.getPurchaseOrders().subscribe({
-      next: (data) => {
-        this.purchaseOrders = data;
-        this.loading = false;
-      },
-      error: (err) => {
-        this.error = 'Failed to load purchase orders. Please try again later.';
-        this.loading = false;
-        console.error('Error fetching purchase orders:', err);
-      }
-    });
+  get purchaseOrders() {
+    return this.purchaseOrdersService.purchaseOrders();
+  }
+
+  get loading() {
+    return this.purchaseOrdersService.loading();
+  }
+
+  get error() {
+    return this.purchaseOrdersService.error();
   }
 
   get openCount(): number {
@@ -103,7 +95,7 @@ export class PurchaseOrdersComponent implements OnInit {
   }
 
   retry(): void {
-    this.loadPurchaseOrders();
+    this.purchaseOrdersService.loadAll();
   }
 
   goToPage(page: number): void {

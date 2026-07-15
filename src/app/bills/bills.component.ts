@@ -16,14 +16,26 @@ export class BillsComponent implements OnInit {
   tabs = ['All Bills', 'Pending Approval', 'Approved', 'Paid', 'Overdue'];
   activeTab = 'All Bills';
 
-  bills: Bill[] = [];
-  loading = true;
-  error = '';
-
   // Pagination
   currentPage = 1;
   pageSize = 10;
   pageSizeOptions = [5, 10, 20, 50];
+
+  ngOnInit(): void {
+    this.billsService.loadAll();
+  }
+
+  get bills() {
+    return this.billsService.bills();
+  }
+
+  get loading() {
+    return this.billsService.loading();
+  }
+
+  get error() {
+    return this.billsService.error();
+  }
 
   get paginatedBills(): Bill[] {
     const start = (this.currentPage - 1) * this.pageSize;
@@ -76,26 +88,6 @@ export class BillsComponent implements OnInit {
   onTabChange(tab: string): void {
     this.activeTab = tab;
     this.currentPage = 1;
-  }
-
-  ngOnInit(): void {
-    this.loadBills();
-  }
-
-  private loadBills(): void {
-    this.loading = true;
-    this.error = '';
-    this.billsService.getBills().subscribe({
-      next: (data) => {
-        this.bills = data;
-        this.loading = false;
-      },
-      error: (err) => {
-        this.error = 'Failed to load bills. Please try again later.';
-        this.loading = false;
-        console.error('Error fetching bills:', err);
-      }
-    });
   }
 
   get filteredBills(): Bill[] {
@@ -172,10 +164,10 @@ export class BillsComponent implements OnInit {
   }
 
   retry(): void {
-    this.loadBills();
+    this.billsService.loadAll();
   }
 
-  createBill() {
+  async createBill() {
     this.formSubmitted = true;
 
     if (!this.newBillForm.vendorName.trim() || !this.newBillForm.amount || !this.newBillForm.date || !this.newBillForm.dueDate) {
@@ -197,8 +189,8 @@ export class BillsComponent implements OnInit {
       return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     };
 
-    const newBill: Bill = {
-      id: `#BILL-${billNumber}`,
+    const newBill: Partial<Bill> = {
+      bill_id: `#BILL-${billNumber}`,
       vendorName: this.newBillForm.vendorName,
       vendorInitials: initials,
       vendorColor: randomColor,
@@ -210,7 +202,7 @@ export class BillsComponent implements OnInit {
       category: this.newBillForm.category || 'Other'
     };
 
-    this.bills.unshift(newBill);
+    await this.billsService.add(newBill);
     this.closeNewBillModal();
   }
 }

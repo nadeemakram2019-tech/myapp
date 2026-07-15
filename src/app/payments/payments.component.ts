@@ -1,22 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
-
-interface Payment {
-  id: string;
-  vendorName: string;
-  vendorLogo?: string;
-  vendorInitials: string;
-  vendorColor: string;
-  amount: number;
-  currency: string;
-  date: string;
-  method: string;
-  status: 'Completed' | 'Pending' | 'Failed' | 'Processing';
-  reference: string;
-  billId?: string;
-}
+import { PaymentService, Payment } from '../services/payment.service';
 
 @Component({
   selector: 'app-payments',
@@ -24,87 +10,39 @@ interface Payment {
   imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: './payments.component.html'
 })
-export class PaymentsComponent {
+export class PaymentsComponent implements OnInit {
   tabs = ['All Payments', 'Completed', 'Pending', 'Failed'];
   activeTab = 'All Payments';
 
-  payments: Payment[] = [
-    {
-      id: 'PMT-001',
-      vendorName: 'Acme Supplies Inc.',
-      vendorInitials: 'AS',
-      vendorColor: 'blue',
-      amount: 4500.00,
-      currency: 'USD',
-      date: '2024-01-15',
-      method: 'ACH Transfer',
-      status: 'Completed',
-      reference: 'REF-78234',
-      billId: 'BL-2024-001'
-    },
-    {
-      id: 'PMT-002',
-      vendorName: 'Tech Solutions LLC',
-      vendorInitials: 'TS',
-      vendorColor: 'purple',
-      amount: 12500.00,
-      currency: 'USD',
-      date: '2024-01-14',
-      method: 'Wire Transfer',
-      status: 'Completed',
-      reference: 'REF-78235',
-      billId: 'BL-2024-002'
-    },
-    {
-      id: 'PMT-003',
-      vendorName: 'Office Depot',
-      vendorInitials: 'OD',
-      vendorColor: 'emerald',
-      amount: 890.50,
-      currency: 'USD',
-      date: '2024-01-16',
-      method: 'Credit Card',
-      status: 'Processing',
-      reference: 'REF-78236'
-    },
-    {
-      id: 'PMT-004',
-      vendorName: 'Global Logistics',
-      vendorInitials: 'GL',
-      vendorColor: 'orange',
-      amount: 7800.00,
-      currency: 'USD',
-      date: '2024-01-17',
-      method: 'ACH Transfer',
-      status: 'Pending',
-      reference: 'REF-78237'
-    },
-    {
-      id: 'PMT-005',
-      vendorName: 'Marketing Pros',
-      vendorInitials: 'MP',
-      vendorColor: 'rose',
-      amount: 3200.00,
-      currency: 'USD',
-      date: '2024-01-13',
-      method: 'Check',
-      status: 'Failed',
-      reference: 'REF-78238'
-    },
-    {
-      id: 'PMT-006',
-      vendorName: 'Cloud Services Ltd',
-      vendorInitials: 'CS',
-      vendorColor: 'blue',
-      amount: 5600.00,
-      currency: 'USD',
-      date: '2024-01-18',
-      method: 'Wire Transfer',
-      status: 'Completed',
-      reference: 'REF-78239',
-      billId: 'BL-2024-003'
-    }
-  ];
+  constructor(public paymentService: PaymentService) {}
+
+  ngOnInit() {
+    this.paymentService.loadAll();
+  }
+
+  get payments() {
+    return this.paymentService.payments();
+  }
+
+  get loading() {
+    return this.paymentService.loading();
+  }
+
+  get totalCompleted(): number {
+    return this.payments.filter(p => p.status === 'Completed').length;
+  }
+
+  get totalPendingAmount(): number {
+    return this.payments
+      .filter(p => p.status === 'Pending')
+      .reduce((sum, p) => sum + Number(p.amount), 0);
+  }
+
+  get totalFailedAmount(): number {
+    return this.payments
+      .filter(p => p.status === 'Failed')
+      .reduce((sum, p) => sum + Number(p.amount), 0);
+  }
 
   get filteredPayments(): Payment[] {
     if (this.activeTab === 'All Payments') {

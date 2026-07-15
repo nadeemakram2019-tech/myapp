@@ -17,7 +17,7 @@
         </div>
       </div>
       <div class="flex items-center gap-3">
-        <button (click)="createNewCreditNote()" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-all shadow-md shadow-emerald-600/20 hover:-translate-y-0.5">
+        <button class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-all shadow-md shadow-emerald-600/20 hover:-translate-y-0.5 opacity-50 cursor-not-allowed">
           <lucide-icon name="plus" class="w-4 h-4"></lucide-icon>
           New Credit Note
         </button>
@@ -95,18 +95,18 @@
 
       <!-- Credit Notes List -->
       <div class="space-y-3">
-        @for (note of filteredCreditNotes; track note.id) {
-          <div class="group bg-card border border-border hover:border-emerald-400/50 hover:shadow-md rounded-xl transition-all duration-200 cursor-pointer" (click)="viewCreditNote(note.id)">
+        @for (note of filteredCreditNotes; track note.credit_note_id) {
+          <div class="group bg-card border border-border hover:border-emerald-400/50 hover:shadow-md rounded-xl transition-all duration-200">
             <div class="p-5">
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4 flex-1 min-w-0">
                   <span class="relative flex shrink-0 overflow-hidden rounded-full w-12 h-12 shadow-sm ring-2 ring-border">
-                    <img class="aspect-square h-full w-full" [alt]="note.customerName" [src]="note.customerAvatar">
+                    <img class="aspect-square h-full w-full" [alt]="note.customer_name" [src]="note.customer_avatar">
                   </span>
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-2 mb-1.5 flex-wrap">
                       <h3 class="font-semibold text-base text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate">
-                        {{ note.id }}
+                        {{ note.credit_note_id }}
                       </h3>
                       <span class="inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-semibold"
                         [class.bg-emerald-50]="note.status === 'Applied'"
@@ -140,11 +140,11 @@
                     <div class="flex items-center gap-4 text-xs text-muted-foreground flex-wrap">
                       <span class="flex items-center gap-1.5">
                         <lucide-icon name="user" class="w-3.5 h-3.5 text-blue-500 shrink-0"></lucide-icon>
-                        <span class="truncate max-w-40">{{ note.customerName }}</span>
+                        <span class="truncate max-w-40">{{ note.customer_name }}</span>
                       </span>
                       <span class="flex items-center gap-1.5">
                         <lucide-icon name="receipt" class="w-3.5 h-3.5 text-indigo-500 shrink-0"></lucide-icon>
-                        <span>{{ note.invoiceRef }}</span>
+                        <span>{{ note.invoice_ref }}</span>
                       </span>
                       <span class="flex items-center gap-1.5">
                         <lucide-icon name="file-text" class="w-3.5 h-3.5 text-purple-500 shrink-0"></lucide-icon>
@@ -156,12 +156,15 @@
                 <div class="flex items-center gap-3 ml-4 shrink-0">
                   <div class="text-right">
                     <p class="text-sm font-semibold text-foreground">{{ formatCurrency(note.amount, note.currency) }}</p>
-                    <p class="text-xs text-muted-foreground">{{ note.issuedDate }}</p>
+                    <p class="text-xs text-muted-foreground">{{ note.issued_date }}</p>
                   </div>
-                  <button (click)="$event.stopPropagation(); viewCreditNote(note.id)" class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-all shadow-sm">
+                  <button (click)="deleteCreditNote(note.credit_note_id)" class="inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 text-xs font-medium border border-border bg-card hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-muted-foreground rounded-lg transition-all">
+                    <lucide-icon name="trash-2" class="w-3 h-3"></lucide-icon>
+                  </button>
+                  <a [routerLink]="['/credit-notes']" class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-all shadow-sm">
                     <lucide-icon name="eye" class="w-3.5 h-3.5"></lucide-icon>
                     View
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>

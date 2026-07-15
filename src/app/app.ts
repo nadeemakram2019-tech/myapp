@@ -24,6 +24,7 @@ export class App {
       } else {
         initialDarkMode = (window.matchMedia && typeof window.matchMedia === 'function') ? window.matchMedia('(prefers-color-scheme: dark)').matches : false;
       }
+    }
     this.darkMode.set(initialDarkMode);
 
     // Synchronize darkMode signal with localStorage and root element class
@@ -40,7 +41,6 @@ export class App {
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
       }
     });
-  }
   }
   toggleDarkMode() {
     this.darkMode.update(prev => !prev);
